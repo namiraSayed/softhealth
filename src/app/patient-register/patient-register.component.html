@@ -1,0 +1,512 @@
+<div class="wrap">
+	<div class="app-hero-header d-flex align-items-center">
+
+		<!-- Breadcrumb starts -->
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item">
+				<i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+				<a routerLink="/home">Home</a>
+			</li>
+			<li class="breadcrumb-item text-primary" aria-current="page">
+				{{'Register' | translate}}
+			</li>
+		</ol>
+		<!-- Breadcrumb ends -->
+	</div>
+	<div class="app-body">
+		<!-- Row starts -->
+		<div class="row gx-3" *ngIf="isNewPatient == false">
+			<div class="col-sm-12 col-12">
+				<div class="card mb-3">
+					<div class="card-header">
+						<h5 class="card-title">Register</h5>
+					</div>
+					<div class="card-body pt-0">
+						<div class="row gx-3 align-items-center">
+							<div class="col-xl-10 col-sm-12 col-md-8">
+								<label class="form-label filterLabel">Keyword:</label>
+								<input type="text" class="form-control" (keyup)="onSearchKey($event)" id="searchd"
+									placeholder="Search Patient by Id, Name, Mobile No.">
+							</div>
+							<div class="col-xl-2 col-sm-12 col-md-4 text-end">
+								<button type="button" class="btn btn-outline-primary mt-2" (click)="newPatient()">
+									New Patient
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Row ends -->
+
+		<!-- Row starts -->
+		<div class="row gx-3" *ngIf="isNewPatient == false">
+			<div class="col-sm-12">
+				<div class="card">
+
+					<div class="card-body">
+						<div class="table-responsive">
+							<table class="table truncate m-0 align-middle">
+								<thead>
+									<tr>
+										<th>No.</th>
+										<th>Patient Name</th>
+										<th>Gender</th>
+										<th>Age</th>
+										<th>Blood Group</th>
+										<th>Mobile</th>
+										<th>Nationality</th>
+										<th>Document</th>
+										<th>Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									@for(patient of patientList; track patient.patientId) {
+									<tr>
+										<td>{{patient.emrNo}}</td>
+										<td>{{patient.firstName}} {{patient.lastName}}</td>
+										<td>
+											@if(patient.genderCode == 'male') {
+											<span class="badge bg-info-subtle text-info">Male</span>
+											}
+											@if(patient.genderCode == 'female') {
+											<span class="badge bg-warning-subtle text-warning">Female</span>
+											}
+										</td>
+										<td>{{patient.age.years}} Years</td>
+										<td>{{patient.bloodGroupCode}}</td>
+										<td>{{patient.contactNumber}}</td>
+										<td>{{patient.nationality}}</td>
+										<td>{{patient.documentValue}}</td>
+										<td>
+											<div class="d-inline-flex gap-1">
+												<button class="btn btn-outline-danger btn-sm table-btn" data-bs-toggle="modal" data-bs-target="#delRow">
+													<i class="ri-delete-bin-line"></i>
+												</button>
+												<a (click)="editPt(patient)" class="btn btn-outline-success btn-sm table-btn" data-bs-toggle="tooltip"
+													data-bs-placement="top" data-bs-title="Edit Patient Details">
+													<i class="ri-edit-box-line"></i>
+												</a>
+												<a class="btn btn-outline-info btn-sm table-btn" data-bs-toggle="tooltip"
+													data-bs-placement="top" data-bs-title="View Dashboard">
+													<i class="ri-eye-line"></i>
+												</a>
+												<button class="btn btn-outline-primary btn-sm table-btn" (click)="selectPatient(patient)">
+													Continue
+												</button>
+											</div>
+										</td>
+									</tr>
+									}
+									@if(patientList.length == 0) {
+										<tr>
+											<td colspan="9">Patient Not Found</td>
+										</tr>
+									}
+								
+								</tbody>
+							</table>
+						</div>
+						<!-- Table ends -->
+
+						<!-- Modal Delete Row -->
+						<div class="modal fade" id="delRow" tabindex="-1" aria-labelledby="delRowLabel" aria-hidden="true">
+							<div class="modal-dialog modal-sm">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="delRowLabel">
+											Confirm
+										</h5>
+										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<div class="modal-body">
+										Are you sure you want to delete the patient?
+									</div>
+									<div class="modal-footer">
+										<div class="d-flex justify-content-end gap-2">
+											<button class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">No</button>
+											<button class="btn btn-danger" data-bs-dismiss="modal" aria-label="Close">Yes</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Row ends -->
+
+		<!-- Row starts -->
+		<div class="row gx-3" *ngIf="isNewPatient == true">
+			<div class="col-sm-12">
+				<div class="card">
+					<div class="card-header">
+						<h5 class="card-title">Add Patient</h5>
+					</div>
+					<div class="card-body">
+						<!-- Row starts -->
+						<form [formGroup]="register">
+							<div class="row gx-3">
+								<div class="col-sm-12">
+									<div class="accordion mb-3" id="accordionSpecialTitle">
+										<div class="accordion-item">
+											<h2 class="accordion-header" id="headingSpecialTitleOne">
+												<button class="accordion-button" type="button" data-bs-toggle="collapse"
+													data-bs-target="#collapseSpecialTitleOne" aria-expanded="true"
+													aria-controls="collapseSpecialTitleOne">
+													<div class="d-flex flex-column">
+														<h5 class="m-0">Basic Info</h5>
+													</div>
+												</button>
+											</h2>
+											<div id="collapseSpecialTitleOne" class="accordion-collapse collapse show"
+												aria-labelledby="headingSpecialTitleOne" data-bs-parent="#accordionSpecialTitle">
+												<div class="accordion-body">
+													<div class="row gx-3">
+														<!-- <div class="col-xxl-2 col-lg-4 col-sm-6">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="a1">Salutation <span
+                                                    class="text-danger">*</span></label>
+                                            <select class="form-select" id="a1" formControlName="titleId">
+                                                <option value="null">Select Salutation</option>
+                                                <option *ngFor="let title of titleData" [ngValue]="title.referenceValueId">
+                                                    {{title.description}}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div> -->
+														<div class="col-xxl-2 col-lg-4 col-sm-6">
+															<div class="mb-3">
+																<label class="form-label" for="a1">First Name <span class="text-danger">*</span></label>
+																<input type="text" class="form-control" formControlName="firstName" id="a1"
+																	placeholder="Enter First Name"
+																	[ngClass]="{ 'is-invalid': submitted && register.controls.firstName.errors }">
+																<div *ngIf="submitted && register.controls.firstName.errors" class="invalid-feedback">
+																	<div *ngIf="register.controls.firstName.errors?.['required']">
+																		First Name is required.</div>
+																</div>
+															</div>
+														</div>
+
+														<div class="col-xxl-2 col-lg-4 col-sm-6">
+															<div class="mb-3">
+																<label class="form-label" for="a2">Middle Name</label>
+																<input type="text" class="form-control" formControlName="middleName" id="a2"
+																	placeholder="Enter Middle Name">
+															</div>
+														</div>
+
+														<div class="col-xxl-2 col-lg-4 col-sm-6">
+															<div class="mb-3">
+																<label class="form-label" for="a3">Last Name <span class="text-danger">*</span></label>
+																<input type="text" class="form-control" formControlName="lastName" id="a3"
+																	placeholder="Enter Last Name"
+																	[ngClass]="{ 'is-invalid': submitted && register.controls.lastName.errors }">
+																<div *ngIf="submitted && register.controls.lastName.errors" class="invalid-feedback">
+																	<div *ngIf="register.controls.lastName.errors?.['required']">
+																		Last Name is required.</div>
+																</div>
+															</div>
+														</div>
+
+														<div class="col-xxl-2 col-lg-4 col-sm-6">
+															<div class="mb-3">
+																<label class="form-label" for="a4">Gender <span class="text-danger">*</span></label>
+																<select class="form-select" id="a4" formControlName="genderId" [ngClass]="{ 'is-invalid': submitted && register.controls.genderId.errors }">
+																	<option value="null">Select Gender</option>
+																	<option *ngFor="let gender of genderData" [ngValue]="gender.dropdownValueId">
+																		{{gender.value}}
+																	</option>
+																</select>
+																<div *ngIf="submitted && register.controls.lastName.errors" class="invalid-feedback">
+																	<div *ngIf="register.controls.genderId.errors?.['required']"> Gender is required.</div>
+																</div>
+															</div>
+														</div>
+
+														<div class="col-xxl-2 col-lg-4 col-sm-6">
+															<div class="mb-3">
+																<label class="form-label" for="txtDob">DOB
+																	<span class="text-danger">*</span></label>
+																<input type="date" class="form-control" formControlName="birthDate" id="txtDob"
+																	(blur)="checkDateCal($event.target)" max="{{now | date:'yyyy-MM-dd'}}"
+																	[ngClass]="{ 'is-invalid': submitted && register.controls.birthDate.errors }">
+															</div>
+														</div>
+
+														<div class="col-xxl-2 col-lg-4 col-sm-6">
+															<div class="mb-3">
+																<label class="form-label" for="a6">Age</label>
+																<input type="text" readonly class="form-control" formControlName="displayAge"
+																	id="a6" placeholder="Age">
+															</div>
+														</div>
+														<div class="col-xxl-2 col-lg-4 col-sm-6">
+															<div class="mb-3">
+																<label class="form-label" for="a7">First Name
+																	Long</label>
+																<input type="text" class="form-control" formControlName="firstNameL" id="a7"
+																	placeholder="Enter First Name Long">
+															</div>
+														</div>
+
+														<div class="col-xxl-2 col-lg-4 col-sm-6">
+															<div class="mb-3">
+																<label class="form-label" for="a8">Middle Name
+																	Long</label>
+																<input type="text" class="form-control" formControlName="middleNameL" id="a8"
+																	placeholder="Enter Middle Name Long">
+															</div>
+														</div>
+
+														<div class="col-xxl-2 col-lg-4 col-sm-6">
+															<div class="mb-3">
+																<label class="form-label" for="a9">Last Name
+																	Long</label>
+																<input type="text" class="form-control" formControlName="lastNameL" id="a9"
+																	placeholder="Enter Last Name Long">
+															</div>
+														</div>
+														<div class="col-xxl-2 col-lg-4 col-sm-6">
+															<div class="mb-3">
+																<label class="form-label" for="d1">Nationtality
+																	<span class="text-danger">*</span></label>
+																<select class="form-select " style="width: 100%;" id="d1"
+																	formControlName="nationalityId" (change)="changeNation($event)"
+																	[ngClass]="{ 'is-invalid': submitted && register.controls.nationalityId.errors }">
+																	<option value="null">Select Nationtality</option>
+																	<option *ngFor="let nation of nationalityData" [value]="nation.countryId">
+																		{{nation.name}}
+																	</option>
+																</select>
+																<div *ngIf="submitted && register.controls.nationalityId.errors"
+																	class="invalid-feedback">
+																	<div *ngIf="register.controls.nationalityId.errors?.['required']">
+																		nationality is required.</div>
+																</div>
+															</div>
+														</div>
+
+														<div class="col-xxl-2 col-lg-4 col-sm-6">
+															<div class="mb-3">
+																<label class="form-label" for="a11">Document Type <span
+																		class="text-danger">*</span></label>
+																<select class="form-select" id="a11" formControlName="documentTypeId" [ngClass]="{ 'is-invalid': submitted && register.controls.documentTypeId.errors }">
+																	<option value="null">Select Document Type</option>
+																	<option *ngFor="let idType of documentTypeData" [ngValue]="idType.dropdownValueId">
+																		{{idType.value}}
+																	</option>
+																</select>
+															</div>
+														</div>
+
+														<div class="col-xxl-2 col-lg-4 col-sm-6">
+															<div class="mb-3">
+																<label class="form-label" for="a12">Document Value <span
+																		class="text-danger">*</span></label>
+																<input type="text" class="form-control " formControlName="documentValue" id="a12"
+																	placeholder="Enter Document Value" [ngClass]="{ 'is-invalid': submitted && register.controls.documentValue.errors }">
+															</div>
+														</div>
+														<!-- <div class="col-xxl-2 col-lg-4 col-sm-6">
+                                      <div class="mb-3">
+                                          <div class="m-0">
+                                              <label for="a10" class="form-label">National Id Image </label>
+                                              <input class="form-control" type="file" id="a10"
+                                                  (change)="processIdImg($event)" accept="image/*">
+                                          </div>
+                                      </div>
+                                  </div> -->
+
+
+														<div class="col-xxl-2 col-lg-4 col-sm-6">
+															<div class="mb-3">
+																<label class="form-label" for="a13">Contact Number <span
+																		class="text-danger">*</span></label>
+																<input type="text" class="form-control" formControlName="contactNumber" id="a13"
+																	placeholder="Enter Contact Number" maxlength="10"
+																	[ngClass]="{ 'is-invalid': submitted && register.controls.contactNumber.errors }">
+																<div *ngIf="submitted && register.controls.contactNumber.errors"
+																	class="invalid-feedback">
+																	<div *ngIf="register.controls.contactNumber.errors?.['required']">
+																		Contact Number is
+																		required.</div>
+																	<div *ngIf="register.controls.contactNumber.errors?.['pattern']">
+																		Pattern is wrong.
+																	</div>
+																</div>
+															</div>
+														</div>
+
+														<div class="col-xxl-2 col-lg-4 col-sm-6">
+															<div class="mb-3">
+																<label class="form-label" for="a13">Email</label>
+																<input type="text" class="form-control" formControlName="email" id="a31"
+																	placeholder="Enter Email" maxlength="10">
+																
+															</div>
+														</div>
+
+														<div class="col-xxl-2 col-lg-4 col-sm-6">
+															<div class="mb-3">
+																<label class="form-label" for="a14">Marital Status <span
+																		class="text-danger">*</span></label>
+																<select class="form-select" id="a14" formControlName="maritalStatusId" [ngClass]="{ 'is-invalid': submitted && register.controls.maritalStatusId.errors }">
+																	<option value="null">Select Marital Status</option>
+																	<option *ngFor="let martial of martialStatusData" [ngValue]="martial.dropdownValueId">
+																		{{martial.value}}
+																	</option>
+																</select>
+															</div>
+														</div>
+
+														<div class="col-xxl-2 col-lg-4 col-sm-6">
+															<div class="mb-3">
+																<label class="form-label" for="a15">Religion <span class="text-danger">*</span></label>
+																<select class="form-select" id="a15" formControlName="religionId" [ngClass]="{ 'is-invalid': submitted && register.controls.religionId.errors }">
+																	<option value="null">Select Religion</option>
+																	<option *ngFor="let religion of religionData" [ngValue]="religion.dropdownValueId">
+																		{{religion.value}}
+																	</option>
+																</select>
+															</div>
+														</div>
+
+														<div class="col-xxl-2 col-lg-4 col-sm-6">
+															<div class="mb-3">
+																<label class="form-label" for="a16">Occupation <span
+																		class="text-danger">*</span></label>
+																<select class="form-select" id="a16" formControlName="patientOccupationId" [ngClass]="{ 'is-invalid': submitted && register.controls.patientOccupationId.errors }">
+																	<option value="null">Select Occupation</option>
+																	<option *ngFor="let occupation of occupationData"
+																		[ngValue]="occupation.dropdownValueId">
+																		{{occupation.value}}
+																	</option>
+																</select>
+															</div>
+														</div>
+
+
+
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="accordion-item">
+											<h2 class="accordion-header" id="headingSpecialTitleTwo">
+												<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+													data-bs-target="#collapseSpecialTitleTwo" aria-expanded="false"
+													aria-controls="collapseSpecialTitleTwo">
+													<div class="d-flex flex-column">
+														<h5 class="m-0">Additional Info</h5>
+													</div>
+												</button>
+											</h2>
+											<div id="collapseSpecialTitleTwo" class="accordion-collapse collapse"
+												aria-labelledby="headingSpecialTitleTwo" data-bs-parent="#accordionSpecialTitle">
+												<div class="accordion-body">
+													<div class="row gx-3">
+
+														<div class="col-xxl-2 col-lg-4 col-sm-6">
+															<div class="mb-3">
+																<label class="form-label" for="a15">Residency
+																	Type</label>
+																<select class="form-select" id="a15" formControlName="residencyTypeId">
+																	<option value="null">Select Residency Type</option>
+																	<option *ngFor="let resType of residenceTypeData" [ngValue]="resType.dropdownValueId">
+																		{{resType.value}}
+																	</option>
+																</select>
+															</div>
+														</div>
+
+														<div class="col-xxl-2 col-lg-4 col-sm-6">
+															<div class="mb-3">
+																<label class="form-label" for="a16">Blood Group</label>
+																<select class="form-select" id="a16" formControlName="bloodGroupId">
+																	<option value="null">Select Blood Group</option>
+																	<option *ngFor="let bloodGroup of bloodGroupData"
+																		[ngValue]="bloodGroup.dropdownValueId">
+																		{{bloodGroup.value}}
+																	</option>
+																</select>
+															</div>
+														</div>
+
+														<!-- <div class="col-xxl-2 col-lg-4 col-sm-6">
+                                    <div class="mb-3">
+                                        <div class="m-0">
+                                            <label for="a17" class="form-label">Patient Profile Image </label>
+                                            <input class="form-control" type="file" id="a17">
+                                        </div>
+                                    </div>
+                                </div> -->
+
+														<div class="col-xxl-2 col-lg-4 col-sm-6">
+															<div class="mb-3">
+																<div class="form-check form-switch mt-4">
+																	<input class="form-check-input" type="checkbox" role="switch"
+																		formControlName="isMultipleBirth" id="88">
+																	<label class="form-check-label" for="88">Is
+																		MultipleBirth</label>
+																</div>
+															</div>
+														</div>
+
+														<div class="col-xxl-2 col-lg-2 col-sm-6">
+															<div class="mb-3">
+																<label class="form-label" for="44">MultipleBirth
+																	Count</label>
+																<input type="number" class="form-control" formControlName="multipleBirthCount" id="44">
+															</div>
+														</div>
+
+
+														<div class="col-xxl-2 col-lg-4 col-sm-6">
+															<div class="mb-3">
+																<div class="form-check form-switch mt-4">
+																	<input class="form-check-input" type="checkbox" role="switch"
+																		formControlName="isDeceased" id="21">
+																	<label class="form-check-label" for="21">Is
+																		Deceased</label>
+																</div>
+															</div>
+														</div>
+														<div class="col-xxl-2 col-lg-2 col-sm-6">
+															<div class="mb-3">
+																<label class="form-label" for="55">Deceased Date</label>
+																<input type="date" class="form-control" formControlName="deceasedDate" id="55">
+															</div>
+														</div>
+
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</form>
+						<!-- Row ends -->
+					</div>
+					<div class="card-footer">
+						<div class="col-sm-12">
+							<div class="d-flex gap-2 justify-content-end">
+								<a (click)="cancelReg()" type="button" class="btn btn-outline-secondary">
+									Cancel
+								</a>
+								<a type="button" class="btn btn-primary" (click)="saveForm()">
+									Create Patient Profile
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Row ends -->
+	</div>
+</div>

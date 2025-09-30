@@ -1,0 +1,30 @@
+.accordion-button {
+    background: #11111111;
+    padding: 10px 13px !important;
+}
+.accordion-collapse {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.1s ease, opacity 0.2s ease;
+}
+
+.accordion-collapse.show {
+  max-height: 1000vh; /* large enough to fit content */
+  opacity: 1;
+}
+
+.accordion-button {
+  cursor: pointer;
+  user-select: none;
+}
+/* 
+.accordion-button.collapsed::after {
+  content: '➕';
+  float: right;
+}
+
+.accordion-button:not(.collapsed)::after {
+  content: '➖';
+  float: right;
+} */

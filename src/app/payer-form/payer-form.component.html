@@ -1,0 +1,198 @@
+<div class="wrap">
+  <div class="app-hero-header d-flex align-items-center">
+
+    <!-- Breadcrumb starts -->
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+        <a routerLink="/home">Home</a>
+      </li>
+      <li class="breadcrumb-item text-primary">
+        <a routerLink="/home">Payer List</a>
+      </li>
+      <li class="breadcrumb-item text-primary" aria-current="page">
+        <a routerLink="/home">Payer Form</a>
+      </li>
+    </ol>
+    <!-- Breadcrumb ends -->
+  </div>
+  <div class="app-body">
+    <div class="row gx-3">
+      <div class="col-sm-12 col-12">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title">Add Payer</h5>
+          </div>
+          <div class="card-body">
+            <!-- Row starts -->
+            <form [formGroup]="payerMaster">
+              <div class="row gx-3">
+
+                <div class="col-xxl-3 col-lg-4 col-sm-6">
+                  <div class="mb-3">
+                    <label class="form-label" for="a1">Payer Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" formControlName="payerName" id="a1"
+                      placeholder="Enter Payer Name"
+                      [ngClass]="{ 'is-invalid': submitted && payerMaster.controls.payerName.errors }">
+                    <div *ngIf="submitted && payerMaster.controls.payerName.errors" class="invalid-feedback">
+                      <div *ngIf="payerMaster.controls.payerName.errors?.['required']">Payer Name is required.</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xxl-3 col-lg-4 col-sm-6">
+                  <div class="mb-3">
+                    <label class="form-label" for="a2">{{'Payer Name Long' | translate}}</label>
+                    <input type="text" class="form-control" formControlName="payerNameL" id="a2"
+                      placeholder="Enter Payer Name Long">
+                  </div>
+                </div>
+                <div class="col-xxl-2 col-lg-4 col-sm-6">
+                  <div class="mb-3">
+                    <label class="form-label" for="a3">Billing Cycle <span class="text-danger">*</span></label>
+                    <select class="form-select" id="a3" class="form-control" formControlName="billingCycleId"
+                      [ngClass]="{ 'is-invalid': submitted && payerMaster.controls.billingCycleId.errors }">
+                      <option value="null">Select Billing Cycle</option>
+                      <option *ngFor="let item of billingCycleData" [ngValue]="item.dropdownValueId">
+                        {{item.value}}
+                      </option>
+                    </select>
+                    <div *ngIf="submitted && payerMaster.controls.billingCycleId.errors" class="invalid-feedback">
+                      <div *ngIf="payerMaster.controls.billingCycleId.errors?.['required']">Please Select BillingCycleId
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                 <div class="col-xxl-2 col-lg-4 col-sm-6">
+                  <div class="mb-3">
+                    <label class="form-label" for="a4">Credit Limit</label>
+                    <input type="number" class="form-control noArrowNum" formControlName="creditLimit" id="a4"
+                      placeholder="Enter Credit Limit">
+                  </div>
+                </div>
+                <div class="col-xxl-2 col-lg-4 col-sm-6">
+                  <div class="mb-3">
+                    <label class="form-label" for="a5">Available Limit</label>
+                    <input type="number" class="form-control noArrowNum" formControlName="availableLimit" id="a5"
+                      placeholder="Enter Available Limit">
+                  </div>
+                </div>
+                <div class="col-xxl-3 col-lg-4 col-sm-6">
+                  <div class="mb-3">
+                    <label class="form-label" for="a6">Vat No.</label>
+                    <input type="text" class="form-control" formControlName="vatNumber" id="a6"
+                      placeholder="Enter Vat No.">
+                  </div>
+                </div>
+                <div class="col-xxl-3 col-lg-4 col-sm-6">
+                  <div class="mb-3">
+                    <label class="form-label" for="a8">commercial Reg. No.</label>
+                    <input type="text" class="form-control" formControlName="commercialRegistrationNumber" id="a8"
+                      placeholder="Enter commercial Reg. No.">
+                  </div>
+                </div>
+                <div class="col-xxl-2 col-lg-4 col-sm-6">
+                  <div class="mb-3">
+                    <label for="paymentTerm" class="form-label">Payment Term</label>
+                    <div class="d-flex">
+                      <div class="form-check">
+                        <input id="cash" class="form-check-input " formControlName="paymentTerms" type="radio" value="false"
+                          name="paymentTerms" style="width: 20px;height: 16px;" checked>
+                        <label for="cash" class="form-check-label ml-1">Cash</label>
+                      </div>
+                      &nbsp;
+                      &nbsp;
+                      <div class="form-check ml-5">
+                        <input id="credit"  class="form-check-input" type="radio" value="true" formControlName="paymentTerms"
+                          name="paymentTerms" style="width: 20px;height: 16px;">
+                        <label for="credit" class="form-check-label ml-1">Credit</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xxl-2 col-lg-4 col-sm-6">
+                  <div class="mb-3">
+                    <label class="form-label" for="a10">Payment Terms Days</label>
+                    <select class="form-select" id="a10" class="form-control" formControlName="paymentTermsDaysId">
+                      <option value="null">Select payment Terms Days</option>
+                      <option *ngFor="let item of paymentTermsDayData" [ngValue]="item.dropdownValueId">
+                        {{item.value}}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-xxl-2 col-lg-4 col-sm-6">
+                  <div class="mb-3">
+                    <label class="form-label" for="a11">ClaimSubmission Method</label>
+                    <select class="form-select" id="a11" class="form-control" formControlName="claimSubmissionMethodId">
+                      <option value="null">Select ClaimSubmission Method</option>
+                      <option *ngFor="let item of claimSubMethodData" [ngValue]="item.dropdownValueId">
+                        {{item.value}}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+               <div class="col-xxl-3 col-lg-4 col-sm-6">
+                  <div class="mb-3">
+                    <div class="m-0">
+                      <label for="a12" class="form-label">Company Image</label>
+                      <input class="form-control" type="file" id="a12" (change)="processEmpImg($event)" accept="image/*">
+                    </div>
+                  </div>
+                </div>
+                <!-- <div class="col-xxl-1">
+                  <div class=" align-self-end" *ngIf="urlImage">
+                    <img class="img-preview" src="{{imageUrl + urlImage}}" alt="uploaded img" width="100%">
+                    <div class="container">
+                      <br>
+                      <span><i class="fa fa-trash text-red" style="width: 10px;" (click)="DeleteE()"></i></span>
+                    </div>
+                  </div>
+                </div> -->
+                <div class="col-xxl-2 col-lg-4 col-sm-6">
+                  <div class="mb-3">
+                    <div class="form-check form-switch mt-4">
+                      <input class="form-check-input" type="checkbox" role="switch"
+                        formControlName="priorAuthorizationRequired" id="a13">
+                      <label class="form-check-label" for="a13">Prior Authorization Req.</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xxl-2 col-lg-4 col-sm-6">
+                  <div class="mb-3">
+                    <div class="form-check form-switch mt-4">
+                      <input class="form-check-input" type="checkbox" role="switch" formControlName="zatcaCompliant"
+                        id="a14">
+                      <label class="form-check-label" for="a14">Zatca Compliant</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xxl-2 col-lg-4 col-sm-6">
+                  <div class="mb-3">
+                    <div class="form-check form-switch mt-4">
+                      <input class="form-check-input" type="checkbox" role="switch" formControlName="isActive" id="a15">
+                      <label class="form-check-label" for="a15">Status</label>
+                    </div>
+                  </div>
+                </div>
+
+
+                
+
+
+              </div>
+            </form>
+            <div class="col-sm-12">
+              <div class="d-flex gap-2 justify-content-end">
+                <a type="button" class="btn btn-outline-secondary" routerLink="/payer-list">Cancel</a>
+                <a type="button" class="btn btn-primary" (click)="saveForm()">
+                  {{ editMode? 'Update' : 'Save'}}
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

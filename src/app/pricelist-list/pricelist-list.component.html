@@ -1,0 +1,184 @@
+<div class="wrap">
+  <div class="app-hero-header d-flex align-items-center">
+
+    <!-- Breadcrumb starts -->
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+        <a routerLink="/home">Home</a>
+      </li>
+      <li class="breadcrumb-item text-primary" aria-current="page">Price List </li>
+    </ol>
+    <!-- Breadcrumb ends -->
+  </div>
+  <div class="app-body">
+    <!-- Row starts -->
+    <div class="col-sm-12">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h5 class="card-title">Price List</h5>
+        </div>
+        <div class="card-body">
+          <div class="custom-tabs-container">
+            <ul class="nav nav-tabs" id="customTab3" role="tablist">
+              <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="tab-oneAA" data-bs-toggle="tab" href="#oneAA" role="tab"
+                  aria-controls="oneAA" aria-selected="true"><i class="ri-shake-hands-line me-2"></i>Price List</a>
+              </li>
+              <li class="nav-item" role="presentation">
+                <a class="nav-link" id="tab-twoAA" data-bs-toggle="tab" href="#twoAA" role="tab" aria-controls="twoAA"
+                  aria-selected="false" tabindex="-1"><i class="ri-archive-stack-line me-2"></i>Draft</a>
+              </li>
+            </ul>
+            <div class="tab-content" id="customTabContent3">
+              <div class="tab-pane fade show active" id="oneAA" role="tabpanel" aria-labelledby="tab-oneAA">
+                <div class="row mb-3">
+                  <div class="col-xxl-5 col-lg-6 col-sm-12">
+                    <label class="form-label filterLabel">{{'Search' | translate}}:</label>
+                    <input type="text" class="form-control" placeholder="Search" id="searchd"
+                      (keyup)="onSearchKey($event)">
+                  </div>
+                    <div class="col-xxl-2 col-lg-6 col-sm-12">
+                      <div class="mb-3">
+                        <label class="form-label filterLabel" for="a1">Payer Category:</label>
+                        <select class="form-select" id="a1" (change)="onpayerCat($event)">
+                          <option value="0">Select Payer Category</option>
+                          <option [value]="payerCat.dropdownValueId" *ngFor="let payerCat of payerCategoryData">
+                            {{payerCat.value}}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                </div>
+                <div class="table-outer">
+                  <div class="table-responsive">
+                    <table class="table truncate m-0">
+                      <thead>
+                        <tr>
+                            <th>{{'Name' | translate}}</th>
+                            <th>{{'Start Date' | translate}}</th>
+                            <th>{{'End Date' | translate}}</th>
+                            <th>{{'Branch' | translate}}</th>
+                            <th>{{'Status' | translate}}</th>
+                            <th>{{'Action' | translate}}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr
+                          *ngFor="let item of priceListData | paginate: { itemsPerPage: itemsPerPage , currentPage: p, totalItems: totalItems } ">
+                           <td>{{item?.priceListName}}</td>
+                            <td>{{item.startDate | date: 'dd/MM/yyyy'}}</td>
+                            <td>{{item.endDate | date: 'dd/MM/yyyy'}}</td>
+                            <td>{{item.branchName}}</td>
+                            <td>
+                              <div class="">
+                                <span *ngIf="item?.isActive == true" class="badge bg-success">{{'Active' |
+                                  translate}}</span>
+                                <span *ngIf="item?.isActive != true" class="badge bg-danger">{{'inActive' |
+                                  translate}}</span>
+                              </div>
+                            </td>
+                            <td>
+                              <a class="btn btn-info btn-sm table-btn" routerLink="/pricelist/{{item.priceListId}}">View</a>
+                              <a class="btn btn-success btn-sm table-btn">Export</a>
+                            </td>
+                        </tr>
+                        <tr *ngIf="notFound == true">
+                          <td>{{'Data Not Found' | translate}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <div class="pagi border-top p-2 mt-2 pb-0 row m-0 align-content-center">
+                      <div class="col-6">
+                        <div class="mr-auto">
+                          Items per Page:
+                          <select (change)="handlePageSizeChange($event)">
+                            <option *ngFor="let size of pageSizes" [value]="size">
+                              {{ size }}
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-6  text-end">
+                        <pagination-controls (pageChange)="getPage(p = $event)"></pagination-controls>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="twoAA" role="tabpanel" aria-labelledby="tab-twoAA">
+                <div class="p-3 ">
+                  <div class="row mb-3 ">
+                    <div class="col-xxl-5 col-lg-6 col-sm-12">
+                      <label class="form-label filterLabel">{{'Search' | translate}}:</label>
+                      <input type="text" class="form-control" placeholder="Search" id="searchd"
+                        (keyup)="searchDraft($event)">
+                    </div>
+                    <div class="col-xxl-2 col-lg-5 col-sm-12">
+                      <div class="mb-3">
+                        <label class="form-label filterLabel" for="a1">Payer Category:</label>
+                        <select class="form-select" id="a1" (change)="changeCatForDraft($event)">
+                          <option value="0">Select Payer Category</option>
+                          <option [value]="payerCat.dropdownValueId" *ngFor="let payerCat of payerCategoryData">
+                            {{payerCat.value}}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-2 ">
+                      <button class="btn btn-primary mt-4" routerLink="/pricelistDraft">Add Price List Draft</button>
+                    </div>
+                  </div>
+                  <div class="table-outer">
+                    <div class="table-responsive">
+                      <table class="table truncate m-0">
+                        <thead>
+                          <tr>
+                            <th>{{'Name' | translate}}</th>
+                            <th>{{'Start Date' | translate}}</th>
+                            <th>{{'End Date' | translate}}</th>
+                            <th>{{'Payer Category' | translate}}</th>
+                            <th>{{'Branch' | translate}}</th>
+                            <th>{{'Status' | translate}}</th>
+                            <th>{{'Action' | translate}}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let item of pricelistDraftD">
+                            <td>{{item?.priceListName}}</td>
+                            <td>{{item.startDate | date: 'dd/MM/yyyy'}}</td>
+                            <td>{{item.endDate | date: 'dd/MM/yyyy'}}</td>
+                            <td>{{item.payerCategory}}</td>
+                            <td>{{item.branchName}}</td>
+                            <td>
+                              <div class="">
+                                <span *ngIf="item?.isActive == true" class="badge bg-success">{{'Active' |
+                                  translate}}</span>
+                                <span *ngIf="item?.isActive != true" class="badge bg-danger">{{'inActive' |
+                                  translate}}</span>
+                              </div>
+                            </td>
+                            <td>
+                              <a class="btn btn-info btn-sm table-btn" routerLink="/pricelistDraft/{{item.priceListDraftId}}">Edit</a>
+                              <a class="btn btn-success btn-sm table-btn" (click)="finalDraft(item)">Finalize</a>
+                            </td>
+                          </tr>
+                          <tr *ngIf="pricelistDraftD.length == 0">
+                            <td colspan="5"> No Data Found</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!-- Row ends -->
+  </div>
+</div>

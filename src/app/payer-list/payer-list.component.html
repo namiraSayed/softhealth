@@ -1,0 +1,165 @@
+<div class="wrap">
+    <div class="app-hero-header d-flex align-items-center">
+
+        <!-- Breadcrumb starts -->
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+                <a routerLink="/home">Home</a>
+            </li>
+            <li class="breadcrumb-item text-primary" aria-current="page">Payer List </li>
+        </ol>
+        <!-- Breadcrumb ends -->
+    </div>
+    <div class="app-body">
+ <div class="col-12 gx-3">
+            <h3>{{'Payer List' | translate}}</h3>
+        </div>
+        <div class="card mb-2">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-2">
+                        <label class="form-label filterLabel">{{'Search' | translate}}:</label>
+                        <input type="text" class="form-control "  (keyup)="onSearchKey($event)" id="searchd">
+                    </div>
+                    <div class="col-10 align-self-end text-end">
+                        <button routerLink="/payer" class="btn btn-primary ">{{'Add Payer' | translate}}</button>
+                        <!-- @if(aclArr.includes('ADD') == true) {
+                            <button routerLink="/department" class="btn btn-primary ">{{'Add Department' | translate}}</button>
+                        } -->
+                    </div>
+               </div>
+            </div>
+        </div>
+
+        <div class="row gx-3">
+            <div class="col-sm-12 col-12">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="table-outer">
+                            <div class="table-responsive">
+                                <table class="table truncate m-0">
+                                    <thead>
+                                        <tr>
+                                            <th>{{'Name' | translate}}</th>
+                                            <th>{{'Billing Cycle' | translate}}</th>
+                                            <th>{{'Vat No.' | translate}}</th>
+                                            <th>{{'Claim Submission Method' | translate}}</th>
+                                            <th>{{'Payment Terms' | translate}}</th>
+                                            <th>{{'Status' | translate}}</th>
+                                            <th>{{'Action' | translate}}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr
+                                            *ngFor="let item of payerListData | paginate: { itemsPerPage: itemsPerPage , currentPage: p, totalItems: totalItems } ">
+                                            <td>{{item.payerName || 'N/A'}}</td>
+                                            <td>{{item.billingCycle || 'N/A'}}</td>
+                                            <td>{{item.vatNumber || 'N/A'}}</td>
+                                            <td>{{item.claimSubmissionMethod || 'N/A'}}</td>
+                                             <td>
+                                                <div class="">
+                                                    <span *ngIf="item?.paymentTerms == true">{{'Credit' | translate}}</span>
+                                                    <span *ngIf="item?.paymentTerms != true">{{'Cash' | translate}}</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="">
+                                                    <span *ngIf="item?.isActive == true"
+                                                        class="badge bg-success">{{'Active' | translate}}</span>
+                                                    <span *ngIf="item?.isActive != true"
+                                                        class="badge bg-danger">{{'inActive' | translate}}</span>
+                                                </div>
+                                            </td>
+                                            <td class="p-1">
+                                                <!-- <a *ngIf="aclArr.includes('EDT')" class="btn btn-outline-success btn-sm table-btn" data-bs-placement="bottom" title="Edit" data-bs-toggle="tooltip" routerLink="/department/{{item.departmentId}}">
+                                                    <i class="ri-edit-box-line"></i>
+                                                </a> -->
+                                                <a class="btn btn-outline-success btn-sm table-btn"
+                                                    data-bs-placement="bottom" title="Edit" data-bs-toggle="tooltip"
+                                                    routerLink="/payer/{{item.payerId}}">
+                                                    <i class="ri-edit-box-line"></i>
+                                                </a>
+                                                <a class="btn btn-outline-info btn-sm table-btn"
+                                                    data-bs-placement="bottom" title="View" data-bs-toggle="tooltip"
+                                                    (click)="onView(item)">
+                                                    <i class="ri-eye-line"></i>
+                                                </a>
+                                                <a class="btn btn-outline-danger btn-sm table-btn"
+                                                    data-bs-toggle="modal" href="#">
+                                                    <i class="ri-delete-bin-line"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr *ngIf="notFound == true">
+                                            <td>{{'Data Not Found' | translate}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="pagi border-top p-2 mt-2 pb-0 row m-0 align-content-center">
+                                    <div class="col-6">
+                                        <div class="mr-auto">
+                                            Items per Page:
+                                            <select (change)="handlePageSizeChange($event)">
+                                                <option *ngFor="let size of pageSizes" [value]="size">
+                                                    {{ size }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-6  text-end">
+                                        <pagination-controls (pageChange)="getPage(p = $event)"></pagination-controls>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="modal-view" tabindex="-1" aria-labelledby="exampleModalXlLabel" aria-hidden="true">
+                          <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalXlLabel">
+                                  {{'Payer Details' | translate}}
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                @if(isModal == true) {
+                                <div class="card">
+                                  <div class="card-body">
+                                    <div class="d-flex flex-wrap">
+                                      <div class="p-2"><span class="modalLabel">Name:</span> {{modalData.payerName}}</div>
+                                      <div class="p-2"><span class="modalLabel">Name Long:</span> {{modalData.payerNameL}}</div>
+                                      <div class="p-2"><span class="modalLabel">Billing Cycle:</span> [{{modalData.billingCycleCode}}]
+                                        {{modalData.billingCycle}}</div>
+                                      <div class="p-2"><span class="modalLabel">Vat Number:</span> {{modalData.vatNumber || 'N/A'}}</div>
+                                      <div class="p-2"><span class="modalLabel">Commercial Registration Number:</span>
+                                        {{modalData.commercialRegistrationNumber || 'N/A'}}</div>
+                                      <div class="p-2"><span class="modalLabel">Claim Submission Method:</span>
+                                        {{modalData.claimSubmissionMethod || 'N/A'}}</div>
+                                      <div class="p-2"><span class="modalLabel">Credit Limit:</span> {{modalData.creditLimit}}</div>
+                                      <div class="p-2"><span class="modalLabel">Available Limit:</span> {{modalData.availableLimit}}
+                                      </div>
+                                      <div class="p-2">
+                                        <span class="modalLabel">Payment Terms: </span>
+                                        <span *ngIf="modalData?.paymentTerms == true">{{'Credit' | translate}}</span>
+                                        <span *ngIf="modalData?.paymentTerms != true">{{'Cash' | translate}}</span>
+                                      </div>
+                                      <div class="p-2">
+                                        <span class="modalLabel">isActive: </span>
+                                        <span *ngIf="modalData?.isActive == true" class="badge bg-success">{{'Active' | translate}}</span>
+                                        <span *ngIf="modalData?.isActive != true" class="badge bg-danger">{{'In Active' | translate}}</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                }
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

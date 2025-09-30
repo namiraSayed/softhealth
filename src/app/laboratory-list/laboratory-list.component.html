@@ -1,0 +1,332 @@
+<div class="wrap">
+    <div class="app-hero-header d-flex align-items-center">
+
+        <!-- Breadcrumb starts -->
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+                <a routerLink="/home">Home</a>
+            </li>
+            <li class="breadcrumb-item text-primary" aria-current="page">Laboratory List </li>
+        </ol>
+        <!-- Breadcrumb ends -->
+    </div>
+    <div class="app-body">
+        <div class="col-12 gx-3">
+            <h3>{{'Laboratory List' | translate}}</h3>
+        </div>
+        <div class="card mb-2">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-2">
+                        <label class="form-label filterLabel">{{'Search' | translate}}:</label>
+                        <input type="text" class="form-control " (keyup)="onSearchKey($event)" id="searchd">
+                    </div>
+                    <div class="col-10 align-self-end text-end">
+                        <button routerLink="/laboratory" class="btn btn-primary ">{{'Add Laboratory' |
+                            translate}}</button>
+                        <!-- @if(aclArr.includes('ADD') == true) {
+                            <button routerLink="/department" class="btn btn-primary ">{{'Add Department' | translate}}</button>
+                        } -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row gx-3">
+            <div class="col-sm-12 col-12">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="table-outer">
+                            <div class="table-responsive">
+                                <table class="table truncate m-0">
+                                    <thead>
+                                        <tr>
+                                            <th>{{'Test Code' | translate}}</th>
+                                            <th>{{'Test Description' | translate}}</th>
+                                            <th>{{'Status' | translate}}</th>
+                                            <th>{{'Action' | translate}}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr
+                                            *ngFor="let item of labListData | paginate: { itemsPerPage: itemsPerPage , currentPage: p, totalItems: totalItems } ">
+                                            <td>{{item.testCode || 'N/A'}}</td>
+                                            <td>{{item.shortDescription || 'N/A'}}</td>
+                                            <td>
+                                                <div class="">
+                                                    <span *ngIf="item?.isActive == true"
+                                                        class="badge bg-success">{{'Active' | translate}}</span>
+                                                    <span *ngIf="item?.isActive != true"
+                                                        class="badge bg-danger">{{'inActive' | translate}}</span>
+                                                </div>
+                                            </td>
+                                            <td class="p-1">
+                                                <!-- <a *ngIf="aclArr.includes('EDT')" class="btn btn-outline-success btn-sm table-btn" data-bs-placement="bottom" title="Edit" data-bs-toggle="tooltip" routerLink="/department/{{item.departmentId}}">
+                                                    <i class="ri-edit-box-line"></i>
+                                                </a> -->
+                                                <a class="btn btn-outline-success btn-sm table-btn"
+                                                    data-bs-placement="bottom" title="Edit" data-bs-toggle="tooltip"
+                                                    routerLink="/laboratory/{{item.laboratoryTestId}}">
+                                                    <i class="ri-edit-box-line"></i>
+                                                </a>
+                                                <a class="btn btn-outline-info btn-sm table-btn"
+                                                    data-bs-placement="bottom" title="View" data-bs-toggle="tooltip"
+                                                    (click)="onView(item)">
+                                                    <i class="ri-eye-line"></i>
+                                                </a>
+                                                <a class="btn btn-outline-danger btn-sm table-btn"
+                                                    data-bs-toggle="modal" href="#">
+                                                    <i class="ri-delete-bin-line"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr *ngIf="notFound == true">
+                                            <td>{{'Data Not Found' | translate}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="pagi border-top p-2 mt-2 pb-0 row m-0 align-content-center">
+                                    <div class="col-6">
+                                        <div class="mr-auto">
+                                            Items per Page:
+                                            <select (change)="handlePageSizeChange($event)">
+                                                <option *ngFor="let size of pageSizes" [value]="size">
+                                                    {{ size }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-6  text-end">
+                                        <pagination-controls (pageChange)="getPage(p = $event)"></pagination-controls>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="modal-view" tabindex="-1" aria-labelledby="exampleModalXlLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog modal-xl">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalXlLabel">
+                                            {{'Lab Test Details' | translate}}
+                                        </h5>
+                                        <button type="button"  class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        @if(isModal == true) {
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="d-flex flex-wrap">
+                                                    <div class="p-2"><span class="modalLabel">Code:</span>
+                                                        {{modalData.testCode}}</div>
+                                                    <div class="p-2"><span class="modalLabel">Name:</span>
+                                                        {{modalData.shortDescription}}</div>
+                                                    <div class="p-2"><span class="modalLabel">Name Long:</span>
+                                                        {{modalData.fullDescription}}</div>
+                                                    <div class="p-2">
+                                                        <span class="modalLabel">Panel: </span>
+                                                        <span *ngIf="modalData?.isPanel == true"
+                                                            class="badge bg-success">{{'Has Panel' | translate}}</span>
+                                                        <span *ngIf="modalData?.isPanel != true"
+                                                            class="badge bg-danger">{{'No Panel' | translate}}</span>
+                                                    </div>
+                                                    <div class="p-2">
+                                                        <span class="modalLabel">isActive: </span>
+                                                        <span *ngIf="modalData?.isActive == true"
+                                                            class="badge bg-success">{{'Active' | translate}}</span>
+                                                        <span *ngIf="modalData?.isActive != true"
+                                                            class="badge bg-danger">{{'In Active' | translate}}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        @if(modalData.laboratoryTestSpecimenList !== null) {
+                                        @for(specimen of modalData.laboratoryTestSpecimenList.laboratoryTestSpecimen;
+                                        track specimen.laboratoryTestSpecimenId) {
+                                        <div class="card mt-2">
+                                            <div class="card-header pb-0">
+                                                <h6 class="card-title"> {{'Specimen Details' | translate}} </h6>
+                                            </div>
+                                            <div class="card-body pt-0">
+                                                <div class="d-flex flex-wrap">
+                                                    <div class="p-2"><span class="modalLabel">Collection:</span>
+                                                        [{{specimen.collection.laboratoryContainer.containerCode}}]
+                                                        {{specimen.collection.laboratoryContainer.containerName}}</div>
+                                                    <div class="p-2"><span class="modalLabel">Submission:</span>
+                                                        [{{specimen.submission.laboratoryContainer.containerCode}}]
+                                                        {{specimen.submission.laboratoryContainer.containerName}}</div>
+                                                    <div class="p-2"><span class="modalLabel">Type:</span>
+                                                        {{specimen.specimenType}}</div>
+                                                    <div class="p-2"><span class="modalLabel">Sub Type:</span>
+                                                        {{specimen.specimenSubType}}
+                                                    </div>
+                                                    <div class="p-2"><span class="modalLabel">Storage Type:</span>
+                                                        {{specimen.specimenStorageType }}</div>
+                                                    <div class="p-2"><span class="modalLabel">Min Volume:</span>
+                                                        {{specimen.minVolume}}</div>
+                                                    <div class="p-2"><span class="modalLabel">Max Volume:</span>
+                                                        {{specimen.maxVolume || 'N/A'}}</div>
+                                                    <div class="p-2"><span class="modalLabel">Storage Time:</span>
+                                                        {{specimen.storageTime || 'N/A'}}</div>
+                                                    <div class="p-2"><span class="modalLabel">Handling
+                                                            Instructions:</span> {{specimen.handlingInstructions ||
+                                                        'N/A'}}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        }
+                                        }
+                                        @if(modalData.laboratoryTestAnalyteList !== null) {
+                                        @for(analyte1 of modalData.laboratoryTestAnalyteList.laboratoryTestAnalyte;
+                                        track analyte1.laboratoryTestAnalyteId) {
+                                        @for(analyte of analyte1.laboratoryAnalyteList.laboratoryAnalyte;
+                                        track analyte.laboratoryAnalyteId) {
+                                             <div class="card mt-2">
+                                            <div class="card-header pb-0">
+                                                <h6 class="card-title"> {{'Analyte Details' | translate}} </h6>
+                                            </div>
+                                            <div class="card-header pb-0">
+                                                <h5 class="card-title m-0">[{{analyte.analyteCode}}]
+                                                    {{analyte.analyteName}}</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="d-flex flex-wrap">
+                                                    <div class="p-2"><span class="modalLabel">Specimen Type:</span>
+                                                        {{analyte.laboratorySpecimenType}}</div>
+                                                    <div class="p-2"><span class="modalLabel">ResultData Type:</span>
+                                                        {{analyte.resultDataType}}
+                                                    </div>
+                                                    <div class="p-2"><span class="modalLabel">TAT Minutes:</span>
+                                                        {{analyte.tatMinutes}}</div>
+                                                    <div class="p-2"><span class="modalLabel">loinC:</span>
+                                                        {{analyte.loinC_NUM || 'N/A'}}</div>
+                                                    <div class="p-2"><span class="modalLabel">SNome:</span>
+                                                        {{analyte.snomedctCode || 'N/A'}}</div>
+                                                    <div class="p-2"><span class="modalLabel">Unit:</span>
+                                                        {{analyte.unit || 'N/A'}}</div>
+                                                    <div class="p-2"><span class="modalLabel">Interpretation:</span>
+                                                        {{analyte.interpretation ||
+                                                        'N/A'}}</div>
+                                                    <div class="p-2"><span class="modalLabel">Clia Complexity:</span>
+                                                        {{analyte.cliaComplexity ||
+                                                        'N/A'}}</div>
+                                                    <div class="p-2"><span class="modalLabel">Test Methodology:</span>
+                                                        {{analyte.testMethodology ||
+                                                        'N/A'}}</div>
+                                                </div>
+                                                <div class="col-12 p-2 pt-0">
+                                                    <div><span class="modalLabel">Analyte Reference:</span></div>
+                                                    <div class="table-outer">
+                                                        <div class="table-responsive">
+                                                            <table class="table truncate m-0">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Display Range</th>
+                                                                        <th>Min Age</th>
+                                                                        <th>Max Age</th>
+                                                                        <th>Age Unit</th>
+                                                                        <th>Normal Low</th>
+                                                                        <th>Normal High</th>
+                                                                        <th>Gender</th>
+                                                                        <th>Status</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    @for(analyte of
+                                                                    analyte.laboratoryAnalyteReferenceList.laboratoryAnalyteReference;
+                                                                    track
+                                                                    analyte.laboratoryAnalyteReferenceId) {
+                                                                    <tr>
+                                                                        <td>{{analyte.displayRange}}</td>
+                                                                        <td>{{analyte.ageMin}}</td>
+                                                                        <td>{{analyte.ageMax}}</td>
+                                                                        <td>{{analyte.ageUnit}}</td>
+                                                                        <td>{{analyte.normalLow}}</td>
+                                                                        <td>{{analyte.normalHigh}}</td>
+                                                                        <td>{{analyte.gender}}</td>
+                                                                        <td>
+                                                                            @if(analyte.isActive == true) {
+                                                                            <span
+                                                                                class="badge border border-primary text-primary">Active</span>
+                                                                            }
+                                                                            @if(analyte.isActive == false) {
+                                                                            <span
+                                                                                class="badge border border-primary text-primary">InActive</span>
+                                                                            }
+                                                                        </td>
+
+                                                                    </tr>
+                                                                    }
+
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        }
+                                        }
+                                        }
+                                         @if(modalData.laboratoryPanelTestList !== null) {
+                                        <div class="card mt-2">
+                                            <div class="card-header pb-0">
+                                                <h6 class="card-title"> {{'Panel Details' | translate}} </h6>
+                                            </div>
+                                            <div class="card-body pt-0">
+                                                <div class="table-outer">
+                                                        <div class="table-responsive">
+                                                            <table class="table truncate m-0">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Code</th>
+                                                                        <th>Description</th>
+                                                                        <th>Full Description</th>
+                                                                        <th>Sequence No</th>
+                                                                        <th>isOptional</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                   @for(panel of modalData.laboratoryPanelTestList.laboratoryPanelTest; track panel.laboratoryPanelTestId) {
+                                                                    <tr>
+                                                                        <td>{{panel.testCode}}</td>
+                                                                        <td>{{panel.shortDescription}}</td>
+                                                                        <td>{{panel.fullDescription}}</td>
+                                                                        <td>{{panel.sequenceNo}}</td>
+                                                                        <td>
+                                                                            @if(panel.isOptional == true) {
+                                                                            <span
+                                                                                class="badge border border-primary text-primary">Active</span>
+                                                                            }
+                                                                            @if(panel.isOptional == false) {
+                                                                            <span
+                                                                                class="badge border border-primary text-primary">InActive</span>
+                                                                            }
+                                                                        </td>
+
+                                                                    </tr>
+                                                                    }
+
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                        </div>
+                                        }
+                                        }
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

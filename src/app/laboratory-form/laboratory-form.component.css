@@ -1,0 +1,13 @@
+.accordion-button {
+    background: #11111111;
+    padding: 10px 13px !important;
+}
+.modalLabel {
+    font-weight: 500;
+}
+.select2-container{
+  width: 100% !important; 
+}
+span.select2.select2-container.select2-container--default.select2-container--below.select2-container--focus {
+    width: 100% !important; 
+}

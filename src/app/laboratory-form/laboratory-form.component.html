@@ -1,0 +1,641 @@
+<div class="wrap">
+	<div class="app-hero-header d-flex align-items-center">
+
+		<!-- Breadcrumb starts -->
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item">
+				<i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+				<a routerLink="/home">Home</a>
+			</li>
+			<li class="breadcrumb-item text-primary">
+				<a routerLink="/home">Master Data</a>
+			</li>
+			<li class="breadcrumb-item text-primary">
+				<a routerLink="/home">General Master</a>
+			</li>
+			<li class="breadcrumb-item text-primary">
+				<a routerLink="/laboratory-list">Laboratory List</a>
+			</li>
+			<li class="breadcrumb-item text-primary" aria-current="page">
+				<a routerLink="/laboratory">Laboratory Add</a>
+			</li>
+		</ol>
+		<!-- Breadcrumb ends -->
+	</div>
+	<div class="app-body">
+		<div class="row gx-3">
+			<div class="col-sm-12 col-12">
+				<div class="card">
+					<div class="card-header">
+						<h5 class="card-title">{{'Add Laboratory' | translate}}</h5>
+					</div>
+					<div class="card-body">
+						<!-- Row Start -->
+						<form [formGroup]="labTestForm">
+							<div class="row gx-3 mt-1 align-items-center">
+								<div class="col-xxl-2 col-lg-3 col-sm-6">
+									<div class="mb-3">
+										<label class="form-label" for="a1">{{'Code' | translate}}<span class="text-danger">*</span></label>
+										<div class="input-group">
+											<input type="text" class="form-control" formControlName="testCode" id="a1" placeholder="Enter Code"   [ngClass]="{'is-invalid': submitted && labTestForm.controls.testCode.errors}">
+											<div *ngIf="submitted && labTestForm.controls.testCode.errors" class="invalid-feedback">
+												<div *ngIf="labTestForm.controls.testCode.errors?.['required']">{{'Code is required.' | translate}}</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-xxl-3 col-lg-3 col-sm-6">
+									<div class="mb-3">
+										<label class="form-label" for="a2">{{'Short description' | translate}}<span class="text-danger">*</span></label>
+										<div class="input-group">
+											<input type="text" class="form-control" formControlName="shortDescription" id="a2" placeholder="{{'Enter Short Description' | translate}}" [ngClass]="{'is-invalid': submitted && labTestForm.controls.shortDescription.errors}">
+											<div *ngIf="submitted && labTestForm.controls.shortDescription.errors" class="invalid-feedback">
+												<div *ngIf="labTestForm.controls.shortDescription.errors?.['required']">
+													{{'Short Description is required.' | translate}}</div>
+											</div>
+										</div>
+									</div>
+								</div>
+                <div class="col-xxl-5 col-lg-5 col-sm-12">
+                  <div class="mb-3">
+                    <label class="form-label" for="a4">{{'Description' | translate}}</label>
+                    <textarea class="form-control" rows="1" formControlName="fullDescription" id="a4" placeholder="{{'Enter Full Description' | translate}}"></textarea>
+                  </div>
+                </div>
+                	<div class="col-xxl-1 col-lg-2 col-sm-6">
+									<div class="mb-3">
+										<div class="form-check form-switch mt-4">
+											<input class="form-check-input" type="checkbox" role="switch" formControlName="isPanel" id="12"  (change)="panelchange($event)">
+											<label class="form-check-label" for="12">{{'Panel' | translate}}</label>
+										</div>
+									</div>
+								</div>
+								<div class="col-xxl-1 col-lg-2 col-sm-6">
+									<div class="mb-3">
+										<div class="form-check form-switch mt-4">
+											<input class="form-check-input" type="checkbox" role="switch" formControlName="isActive" id="10">
+											<label class="form-check-label" for="10">{{'Status' | translate}}</label>
+										</div>
+									</div>
+								</div>
+							</div>
+						</form>
+						<div class="col-sm-12">
+							<div class="d-flex gap-2 justify-content-end">
+								<a type="button" class="btn btn-outline-secondary"
+									routerLink="/laboratory-list">Cancel</a>
+								<a type="button" class="btn btn-primary" (click)="saveForm()">
+									{{ editMode? 'Update' : 'Save'}}
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+         <!-- Row starts -->
+        <div class="row gx-3 mt-3" *ngIf="editMode">
+          <div class="col-sm-12">
+            <div class="accordion mb-3" id="accordionSpecialTitle">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingSpecialTitleOne">
+                  <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseSpecialTitleOne" aria-expanded="true"
+                    aria-controls="collapseSpecialTitleOne">
+                    <div class="d-flex flex-column">
+                      <h5 class="m-0">Specimen</h5>
+                    </div>
+                  </button>
+                </h2>
+                <div id="collapseSpecialTitleOne" class="accordion-collapse collapse show" aria-labelledby="headingSpecialTitleOne"
+                  data-bs-parent="#accordionSpecialTitle">
+                  <div class="accordion-body">
+                    <div class="row">
+                      <!-- Row Start -->
+                      <form [formGroup]="labSpecimenForm">
+                        <div class="row gx-3 mt-1 ">
+                          <div class="col-xxl-3 col-lg-6 col-sm-12">
+                            <div class="mb-3">
+                              <label class="form-label" for="b1">Collection Container</label>
+                              <select class="form-select" id="b1" formControlName="collectionContainerId">
+                                <option value="null">Select Collection Category</option>
+                                <option [value]="container.laboratoryContainerId" *ngFor="let container of containerData">
+                                  [{{container.containerCode}}] {{container.containerName}}
+                                </option>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="col-xxl-3 col-lg-6 col-sm-12">
+                            <div class="mb-3">
+                              <label class="form-label" for="b2">Submission Container</label>
+                              <select class="form-select" id="b2" formControlName="submissionContainerId">
+                                <option value="null">Select Submission Category</option>
+                                <option [value]="container.laboratoryContainerId" *ngFor="let container of containerData">
+                                  [{{container.containerCode}}] {{container.containerName}}
+                                </option>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="col-xxl-2 col-lg-3 col-sm-12">
+                            <div class="mb-3">
+                              <label class="form-label" for="b3">Type</label>
+                              <select class="form-select" id="b3" formControlName="specimenTypeId" (change)="changeSpecimenType($event.target)">
+                                <option value="null">Select Type</option>
+                                <option [value]="type.dropdownValueId" *ngFor="let type of specimenTypeData">
+                                  {{type.value}}
+                                </option>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="col-xxl-2 col-lg-3 col-sm-12">
+                            <div class="mb-3">
+                              <label class="form-label" for="b4"> Sub Type</label>
+                              <select class="form-select" id="b4" formControlName="specimenSubTypeId">
+                                <option value="null">Select Sub Type</option>
+                                <option [value]="subType.dropdownValueId" *ngFor="let subType of specimenSubTypeFinal">
+                                  {{subType.value}}
+                                </option>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="col-xxl-2 col-lg-3 col-sm-12">
+                            <div class="mb-3">
+                              <label class="form-label" for="b5">Storage Type</label>
+                              <select class="form-select" id="b5" formControlName="specimenStorageTypeId">
+                                <option value="null">Select Storage Type</option>
+                                <option [value]="storage.dropdownValueId" *ngFor="let storage of specimenStorageTypeData">
+                                  {{storage.value}}
+                                </option>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="col-xxl-2 col-lg-3 col-sm-12">
+                            <div class="mb-3">
+                              <label class="form-label" for="b6">Storage Time</label>
+                              <input type="text" class="form-control" formControlName="storageTime" id="b6" placeholder="Enter Storage Time">
+                            </div>
+                          </div>
+                          <div class="col-xxl-2 col-lg-3 col-sm-6">
+                            <div class="mb-3">
+                              <label class="form-label" for="b7">Min Volume</label>
+                              <input type="text" class="form-control" formControlName="minVolume" id="b7" placeholder="Enter Min Volume" [ngClass]="{'is-invalid': submitted1 && labSpecimenForm.controls.minVolume.errors}">
+                              <div *ngIf="submitted1 && labSpecimenForm.controls.minVolume.errors"  class="invalid-feedback">
+												<div *ngIf="labSpecimenForm.controls.minVolume.errors?.['required']">
+													{{'Short Description is required.' | translate}}</div>
+											</div>
+                            </div>
+                          </div>
+                          <div class="col-xxl-2 col-lg-3 col-sm-6">
+                            <div class="mb-3">
+                              <label class="form-label" for="b8">Max Volume</label>
+                              <input type="text" class="form-control" formControlName="maxVolume" id="b8" placeholder="Enter Max Volume">
+                            </div>
+                          </div>
+                          <div class="col-xxl-5 col-lg-6 col-sm-12">
+                            <div class="mb-3">
+                              <label class="form-label" for="b9">{{'Handling Instructions' | translate}}</label>
+                              <textarea class="form-control" rows="4" formControlName="handlingInstructions" id="b9"
+                                placeholder="{{'Enter Handling Instructions' | translate}}"></textarea>
+                            </div>
+                          </div>
+                          <div class="col-xxl-1 col-lg-2 col-sm-6">
+                            <div class="mb-3">
+                              <div class="form-check form-switch mt-4">
+                                <input class="form-check-input" type="checkbox" role="switch" formControlName="isActive" id="b10">
+                                <label class="form-check-label" for="b10">{{'Status' | translate}}</label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </form>
+                      <div class="col-sm-12">
+                        <div class="d-flex gap-2 justify-content-end">
+                          <a type="button" class="btn btn-outline-secondary">Cancel</a>
+                          <a type="button" class="btn btn-primary" (click)="saveSpecimenForm()">
+                            {{ editMode? 'Update' : 'Save'}}
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="table-outer mt-3">
+                      <div class="table-responsive">
+                        <table class="table truncate m-0">
+                          <thead>
+                            <tr>
+                              <th>Type</th>
+                              <th>Sub Type</th>
+                              <th>Collection</th>
+                              <th>Submission</th>
+                              <th>StorageType</th>
+                              <th>Status</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            @for(specimen of specimenList; track specimen.laboratoryTestSpecimenId) {
+                            <tr>
+                              <td>{{specimen.specimenType}}</td>
+                              <td>{{specimen.specimenSubType}}</td>
+                              <td>[{{specimen.collection.laboratoryContainer.containerCode}}]
+                                {{specimen.collection.laboratoryContainer.containerName}}</td>
+                              <td>[{{specimen.submission.laboratoryContainer.containerCode}}]
+                                {{specimen.submission.laboratoryContainer.containerName}}</td>
+                              <td>{{specimen.specimenStorageType}}</td>
+                              <td>
+                                @if(specimen.isActive == true) {
+                                  <span class="badge border border-primary text-primary">Active</span>
+                                } 
+                                @if(specimen.isActive == false) {
+                                  <span class="badge border border-primary text-primary">Active</span>
+                                } 
+                              </td>
+                              <td class="p-1">
+                                <a class="btn btn-outline-success btn-sm table-btn" data-bs-placement="bottom" title="Edit"
+                                  data-bs-toggle="tooltip" (click)="editSpecimen(specimen)">
+                                  <i class="ri-edit-box-line"></i>
+                                </a>
+                                <a class="btn btn-outline-info btn-sm table-btn" data-bs-placement="bottom" title="View"
+                                  data-bs-toggle="tooltip" (click)="viewSpecimen(specimen)">
+                                  <i class="ri-eye-line"></i>
+                                </a>
+                                <a class="btn btn-outline-danger btn-sm table-btn" data-bs-toggle="modal" href="#">
+                                  <i class="ri-delete-bin-line"></i>
+                                </a>
+                              </td>
+                            </tr>
+                            }
+                
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                      <!-- modal view  -->
+                    <div class="modal fade" id="specimenInfoM" tabindex="-1" aria-labelledby="exampleModalXlLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalXlLabel">
+                              {{'Specimen Details' | translate}}
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            @if(isSpecimenModal == true) {
+                            <div class="card">
+                              <div class="card-body">
+                                <div class="d-flex flex-wrap">
+                                  <div class="p-2"><span class="modalLabel">Collection:</span>
+                                    [{{specimenModalData.collection.laboratoryContainer.containerCode}}]
+                                {{specimenModalData.collection.laboratoryContainer.containerName}}</div>
+                                    <div class="p-2"><span class="modalLabel">Submission:</span>
+                                    [{{specimenModalData.submission.laboratoryContainer.containerCode}}]
+                                {{specimenModalData.submission.laboratoryContainer.containerName}}</div>
+                                  <div class="p-2"><span class="modalLabel">Type:</span>
+                                    {{specimenModalData.specimenType}}</div>
+                                  <div class="p-2"><span class="modalLabel">Sub Type:</span> {{specimenModalData.specimenSubType}}
+                                  </div>
+                                  <div class="p-2"><span class="modalLabel">Storage Type:</span> {{specimenModalData.specimenStorageType }}</div>
+                                  <div class="p-2"><span class="modalLabel">Min Volume:</span> {{specimenModalData.minVolume}}</div>
+                                  <div class="p-2"><span class="modalLabel">Max Volume:</span> {{specimenModalData.maxVolume || 'N/A'}}</div>
+                                  <div class="p-2"><span class="modalLabel">Storage Time:</span> {{specimenModalData.storageTime || 'N/A'}}</div>
+                                  <div class="p-2"><span class="modalLabel">Handling Instructions:</span> {{specimenModalData.handlingInstructions || 'N/A'}}</div>
+                                </div>
+                              </div>
+                            </div>
+                            }
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                              Close
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingSpecialTitleTwo">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseSpecialTitleTwo" aria-expanded="false"
+                    aria-controls="collapseSpecialTitleTwo">
+                    <div class="d-flex flex-column">
+                      <h5 class="m-0">Analyte</h5>
+                    </div>
+                  </button>
+                </h2>
+                <div id="collapseSpecialTitleTwo" class="accordion-collapse collapse"
+                  aria-labelledby="headingSpecialTitleTwo" data-bs-parent="#accordionSpecialTitle">
+                  <div class="accordion-body">
+                   <div class="row">
+                      <!-- Row Start -->
+                      <form [formGroup]="labAnalyteForm">
+                        <div class="row gx-3 mt-1 ">
+                           <div class="col-xxl-3 col-lg-6 col-sm-12">
+                            <div class="mb-3">
+                              <label class="form-label" for="c1">Analyte</label>
+                              <div class="form-group">
+                                <select class="form-select" id="c1" style="width: 100%;" formControlName="laboratoryAnalyteId"
+                                  [ngClass]="{'is-invalid': submitted2 && labAnalyteForm.controls.laboratoryAnalyteId.errors}">
+                                  <option value="null">Select Analyte</option>
+                                  <option [value]="analyte.laboratoryAnalyteId" *ngFor="let analyte of analyteData">
+                                    [{{analyte.analyteCode}}] {{analyte.analyteName}}
+                                  </option>
+                                </select>
+                                <div *ngIf="submitted2 && labAnalyteForm.controls.laboratoryAnalyteId.errors" class="invalid-feedback">
+                                  <div *ngIf="labAnalyteForm.controls.laboratoryAnalyteId.errors?.['required']">
+                                    {{'Analyte is required.' | translate}}</div>
+                                </div>
+                              </div>
+                            
+                            </div>
+                          </div>
+                         
+                          <div class="col-xxl-2 col-lg-3 col-sm-6">
+                            <div class="mb-3">
+                              <label class="form-label" for="c2">Display Order</label>
+                              <input type="text" class="form-control" formControlName="displayOrder" id="c2" placeholder="Enter Display Order">
+                            </div>
+                          </div>
+                          <div class="col-xxl-2 col-lg-2 col-sm-6">
+                            <div class="mb-3">
+                              <div class="form-check form-switch mt-4">
+                                <input class="form-check-input" type="checkbox" role="switch" formControlName="isRequired" id="c3">
+                                <label class="form-check-label" for="c3">{{'IS Required' | translate}}</label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </form>
+                      <div class="col-sm-12">
+                        <div class="d-flex gap-2 justify-content-end">
+                          <a type="button" class="btn btn-outline-secondary">Cancel</a>
+                          <a type="button" class="btn btn-primary" (click)="saveAnaltyeForm()">
+                            {{ editMode? 'Update' : 'Save'}}
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="table-outer mt-3">
+                      <div class="table-responsive">
+                        <table class="table truncate m-0">
+                          <thead>
+                            <tr>
+                              <th>Analyte</th>
+                              <th>Display Order</th>
+                              <th>Status</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            @for(analyte of analyteList; track analyte.laboratoryTestAnalyteId) {
+                            <tr>
+                              <td>
+                                @if(analyte.laboratoryAnalyteList !== null) {
+                                  @for(analyte1 of analyte.laboratoryAnalyteList.laboratoryAnalyte; track analyte1.laboratoryAnalyteId) {
+                                    @if(analyte.laboratoryAnalyteId == analyte1.laboratoryAnalyteId) {
+                                      [{{analyte1.analyteCode}}] {{analyte1.analyteName}}
+                                    }
+                                  }
+                                }
+                              </td>
+                              <td>{{analyte.displayOrder}}</td>
+                              <td>
+                                @if(analyte.isRequired == true) {
+                                  <span class="badge border border-primary text-primary">Required</span>
+                                } 
+                                @if(analyte.isRequired == false) {
+                                  <span class="badge border border-primary text-primary">Not Required</span>
+                                } 
+                              </td>
+                              <td class="p-1">
+                                <a class="btn btn-outline-success btn-sm table-btn" data-bs-placement="bottom" title="Edit"
+                                  data-bs-toggle="tooltip" (click)="editAnalyte(analyte)">
+                                  <i class="ri-edit-box-line"></i>
+                                </a>
+                                <a class="btn btn-outline-info btn-sm table-btn" data-bs-placement="bottom" title="View"
+                                  data-bs-toggle="tooltip" (click)="analyteModal(analyte)">
+                                  <i class="ri-eye-line"></i>
+                                </a>
+                                <a class="btn btn-outline-danger btn-sm table-btn" data-bs-toggle="modal" href="#">
+                                  <i class="ri-delete-bin-line"></i>
+                                </a>
+                              </td>
+                            </tr>
+                            }
+                
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    <!-- modal view  -->
+                    <div class="modal fade" id="analyteInfoM" tabindex="-1" aria-labelledby="exampleModalXlLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalXlLabel">
+                              {{'Analyte Details' | translate}}
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            @if(isAnalyteModal == true) {
+                            <div class="card">
+                              <div class="card-header pb-0">
+                                <h5 class="card-title m-0">[{{analyteModalData.analyteCode}}] {{analyteModalData.analyteName}}</h5>
+                              </div>
+                              <div class="card-body">
+                                <div class="d-flex flex-wrap">
+                                  <div class="p-2"><span class="modalLabel">Specimen Type:</span>
+                                    {{analyteModalData.laboratorySpecimenType}}</div>
+                                  <div class="p-2"><span class="modalLabel">ResultData Type:</span> {{analyteModalData.resultDataType}}
+                                  </div>
+                                  <div class="p-2"><span class="modalLabel">TAT Minutes:</span> {{analyteModalData.tatMinutes}}</div>
+                                  <div class="p-2"><span class="modalLabel">loinC:</span> {{analyteModalData.loinC_NUM || 'N/A'}}</div>
+                                  <div class="p-2"><span class="modalLabel">SNome:</span> {{analyteModalData.snomedctCode || 'N/A'}}</div>
+                                  <div class="p-2"><span class="modalLabel">Unit:</span> {{analyteModalData.unit || 'N/A'}}</div>
+                                  <div class="p-2"><span class="modalLabel">Interpretation:</span> {{analyteModalData.interpretation ||
+                                    'N/A'}}</div>
+                                  <div class="p-2"><span class="modalLabel">Clia Complexity:</span> {{analyteModalData.cliaComplexity ||
+                                    'N/A'}}</div>
+                                  <div class="p-2"><span class="modalLabel">Test Methodology:</span> {{analyteModalData.testMethodology ||
+                                    'N/A'}}</div>
+                                </div>
+                                <div class="col-12 p-2 pt-0">
+                                  <div><span class="modalLabel">Analyte Reference:</span></div>
+                                  <div class="table-outer">
+                                    <div class="table-responsive">
+                                      <table class="table truncate m-0">
+                                        <thead>
+                                          <tr>
+                                            <th>Display Range</th>
+                                            <th>Min Age</th>
+                                            <th>Max Age</th>
+                                            <th>Age Unit</th>
+                                            <th>Normal Low</th>
+                                            <th>Normal High</th>
+                                            <th>Gender</th>
+                                            <th>Status</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          @for(analyte of analyteModalData.laboratoryAnalyteReferenceList.laboratoryAnalyteReference; track
+                                          analyte.laboratoryAnalyteReferenceId) {
+                                          <tr>
+                                            <td>{{analyte.displayRange}}</td>
+                                            <td>{{analyte.ageMin}}</td>
+                                            <td>{{analyte.ageMax}}</td>
+                                            <td>{{analyte.ageUnit}}</td>
+                                            <td>{{analyte.normalLow}}</td>
+                                            <td>{{analyte.normalHigh}}</td>
+                                            <td>{{analyte.gender}}</td>
+                                            <td>
+                                              @if(analyte.isActive == true) {
+                                              <span class="badge border border-primary text-primary">Active</span>
+                                              }
+                                              @if(analyte.isActive == false) {
+                                              <span class="badge border border-primary text-primary">InActive</span>
+                                              }
+                                            </td>
+                                           
+                                          </tr>
+                                          }
+                    
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            }
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                              Close
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    
+                    </div>
+                  </div>
+                </div>
+              </div>
+              @if(isPanelShow == true) {
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingSpecialTitleThree">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseSpecialTitleThree" aria-expanded="false" aria-controls="collapseSpecialTitleThree">
+                    <div class="d-flex flex-column">
+                      <h5 class="m-0">Panel</h5>
+                    </div>
+                  </button>
+                </h2>
+                <div id="collapseSpecialTitleThree" class="accordion-collapse collapse" aria-labelledby="headingSpecialTitleThree"
+                  data-bs-parent="#accordionSpecialTitle">
+                  <div class="accordion-body">
+                      <div class="row">
+                      <!-- Row Start -->
+                      <form [formGroup]="labPanelForm">
+                        <div class="row gx-3 mt-1 ">
+                           <div class="col-xxl-3 col-lg-6 col-sm-12">
+                            <div class="mb-3">
+                              <label class="form-label" for="d1">Panel Test</label>
+                              <div class="form-group">
+                                <select class="form-select" id="d1" style="width: 100%;"  formControlName="laboratoryTestPanelId">
+                                  <option value="null">Select Panel Test</option>
+                                  <option [value]="pTest.laboratoryTestId" *ngFor="let pTest of panelTestData">
+                                    [{{pTest.testCode}}] {{pTest.shortDescription}} 
+                                  </option>
+                                </select>
+                                <div *ngIf="submitted3 && labPanelForm.controls.laboratoryTestPanelId.errors" class="invalid-feedback">
+                                  <div *ngIf="labPanelForm.controls.laboratoryTestPanelId.errors?.['required']">
+                                    {{'Panel is required.' | translate}}</div>
+                                </div>
+                              </div>
+                            
+                            </div>
+                          </div>
+                         
+                          <div class="col-xxl-2 col-lg-3 col-sm-6">
+                            <div class="mb-3">
+                              <label class="form-label" for="d2">Sequence No</label>
+                              <input type="number" class="form-control" formControlName="sequenceNo" id="d2" placeholder="Enter sequenceNo">
+                            </div>
+                          </div>
+                          <div class="col-xxl-2 col-lg-2 col-sm-6">
+                            <div class="mb-3">
+                              <div class="form-check form-switch mt-4">
+                                <input class="form-check-input" type="checkbox" role="switch" formControlName="isOptional" id="d3">
+                                <label class="form-check-label" for="d3">{{'IS Optional' | translate}}</label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </form>
+                      <div class="col-sm-12">
+                        <div class="d-flex gap-2 justify-content-end">
+                          <a type="button" class="btn btn-outline-secondary">Cancel</a>
+                          <a type="button" class="btn btn-primary" (click)="savePanelForm()">
+                            {{ editMode? 'Update' : 'Save'}}
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="table-outer mt-3">
+                      <div class="table-responsive">
+                        <table class="table truncate m-0">
+                          <thead>
+                            <tr>
+                              <th>Code</th>
+                              <th>Description</th>
+                              <th>Full Description</th>
+                              <th>Sequence No</th>
+                              <th>is Optional</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            @for(panel of panelList; track panel.laboratoryPanelTestId) {
+                            <tr>
+                              <td>{{panel.testCode}}</td>
+                              <td>{{panel.shortDescription}}</td>
+                              <td>{{panel.fullDescription}}</td>
+                              <td>{{panel.sequenceNo}}</td>
+                              <td>
+                                @if(panel.isOptional == true) {
+                                <span class="badge border border-primary text-primary">Optional</span>
+                                }
+                                @if(panel.isOptional == false) {
+                                <span class="badge border border-primary text-primary">Not optional</span>
+                                }
+                              </td>
+                              <td class="p-1">
+                                <a class="btn btn-outline-success btn-sm table-btn" data-bs-placement="bottom" title="Edit" data-bs-toggle="tooltip"
+                                  (click)="editPanel(panel)">
+                                  <i class="ri-edit-box-line"></i>
+                                </a>
+                              
+                                <a class="btn btn-outline-danger btn-sm table-btn" data-bs-toggle="modal" href="#">
+                                  <i class="ri-delete-bin-line"></i>
+                                </a>
+                              </td>
+                            </tr>
+                            }
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              }
+            </div>
+          </div>
+        </div>
+        <!-- Row ends -->
+		</div>
+	</div>
+</div>
