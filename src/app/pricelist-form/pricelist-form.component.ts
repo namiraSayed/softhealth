@@ -33,6 +33,7 @@ export class PricelistFormComponent {
   plDraftForm = this.fb.group({
     priceListDraftId: [],
     payerCategoryId: [0],
+    priceListName: ['', Validators.required],
     branchId: [1],
     payerId: [1],
     insuranceId: [null],
@@ -52,7 +53,8 @@ export class PricelistFormComponent {
       console.log(data, 'data');
       this.toastr.success('Data Saved Successfully')
       if(this.plDraftForm.get('operationCode')?.value == 'U') {
-        this.router.navigate(['pricelistDraft', this.listDraftId])
+        // this.router.navigate(['pricelistDraft', this.listDraftId])
+        this.reloadCurrentRoute()
       } else {
         this.router.navigate(['pricelistDraft', data.id])
       }
@@ -333,6 +335,7 @@ reloadCurrentRoute() {
       this.plDraftForm.patchValue({
         priceListDraftId: this.priceDraftData.priceListDraftId,
         payerCategoryId: this.priceDraftData.payerCategoryId,
+        priceListName: this.priceDraftData.priceListName,
         branchId: this.priceDraftData.branchId,
         startDate: this.priceDraftData.startDate,
         endDate: this.priceDraftData.endDate,

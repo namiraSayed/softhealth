@@ -209,7 +209,7 @@
                       </form>
                       <div class="col-sm-12">
                         <div class="d-flex gap-2 justify-content-end">
-                          <a type="button" class="btn btn-outline-secondary">Cancel</a>
+                          <a type="button" class="btn btn-outline-secondary" (click)="clearform()">Cancel</a>
                           <a type="button" class="btn btn-primary" (click)="saveSpecimenForm()">
                             {{ editMode? 'Update' : 'Save'}}
                           </a>
@@ -370,7 +370,7 @@
                       </form>
                       <div class="col-sm-12">
                         <div class="d-flex gap-2 justify-content-end">
-                          <a type="button" class="btn btn-outline-secondary">Cancel</a>
+                          <a type="button" class="btn btn-outline-secondary" (click)="clearform()">Cancel</a>
                           <a type="button" class="btn btn-primary" (click)="saveAnaltyeForm()">
                             {{ editMode? 'Update' : 'Save'}}
                           </a>
@@ -544,7 +544,7 @@
                             <div class="mb-3">
                               <label class="form-label" for="d1">Panel Test</label>
                               <div class="form-group">
-                                <select class="form-select" id="d1" style="width: 100%;"  formControlName="laboratoryTestPanelId">
+                                <select class="form-select" id="d12" style="width: 100%;"  formControlName="laboratoryTestPanelId">
                                   <option value="null">Select Panel Test</option>
                                   <option [value]="pTest.laboratoryTestId" *ngFor="let pTest of panelTestData">
                                     [{{pTest.testCode}}] {{pTest.shortDescription}} 
@@ -577,7 +577,7 @@
                       </form>
                       <div class="col-sm-12">
                         <div class="d-flex gap-2 justify-content-end">
-                          <a type="button" class="btn btn-outline-secondary">Cancel</a>
+                          <a type="button" class="btn btn-outline-secondary" (click)="clearform()">Cancel</a>
                           <a type="button" class="btn btn-primary" (click)="savePanelForm()">
                             {{ editMode? 'Update' : 'Save'}}
                           </a>

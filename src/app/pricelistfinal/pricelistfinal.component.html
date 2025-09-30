@@ -38,6 +38,21 @@
                     </select>
                   </div>
                 </div> -->
+                <div class="col-xxl-3 col-lg-3 col-sm-6">
+                  <div class="mb-3">
+                    <label class="form-label" for="a33">{{'Name' | translate}}<span
+                        class="text-danger">*</span></label>
+                    <div class="input-group">
+                      <input type="text" class="form-control" formControlName="priceListName" id="a33"
+                        [ngClass]="{'is-invalid': submitted && plForm.controls.priceListName.errors}">
+                      <div *ngIf="submitted && plForm.controls.priceListName.errors" class="invalid-feedback">
+                        <div *ngIf="plForm.controls.priceListName.errors?.['required']">{{'PriceList Name  is required.' |
+                          translate}}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <div class="col-xxl-2 col-lg-3 col-sm-6">
                   <div class="mb-3">
                     <label class="form-label" for="a2">{{'Start Date' | translate}}<span

@@ -188,7 +188,7 @@ export class LaboratoryFormComponent {
     this.http.post(this.serverUrl + 'laboratoryProcess/SetLaboratoryTestSpecimen', saveObj).subscribe((data:any) => {
       console.log(data, 'data');
       $('#b1').val('null').trigger('change');
-      $('#b1').val('null').trigger('change');
+      $('#b2').val('null').trigger('change');
       this.labSpecimenForm.reset()
       this.spinner.hide()
       this.getlabTest(this.editId)
@@ -288,12 +288,12 @@ export class LaboratoryFormComponent {
     }
      this.submitted3 = false
     var savePanelObj:any = this.labPanelForm.value
-    if(savePanelObj.laboratoryTestPanelId == null) {
+    if(savePanelObj.laboratoryPanelTestId == null) {
       savePanelObj.operationCode = 'C'
     } else {
       savePanelObj.operationCode = 'U'
     }
-    savePanelObj.laboratoryPanelTestId = parseInt(savePanelObj.laboratoryPanelTestId)
+    savePanelObj.laboratoryTestPanelId = parseInt(savePanelObj.laboratoryTestPanelId)
     console.log(savePanelObj, 'savePanelObj');
     this.spinner.show()
     this.http.post(this.serverUrl + 'laboratoryProcess/SetLaboratoryPanelTest', savePanelObj).subscribe((dataa:any) => {
@@ -302,6 +302,12 @@ export class LaboratoryFormComponent {
       this.spinner.hide()
       this.getlabTest(this.editId)
     })
+  }
+
+  clearform() {
+     this.labPanelForm.reset()
+     this.labAnalyteForm.reset()
+     this.labSpecimenForm.reset()
   }
 
   labData:any

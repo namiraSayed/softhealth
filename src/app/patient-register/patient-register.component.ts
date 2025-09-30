@@ -46,6 +46,7 @@ export class PatientRegisterComponent {
     route = inject(ActivatedRoute);
 
   patientList:any = []
+  showlist = false
   onSearchKey(e:any) {
     console.log(e, 'ere');
     var pKey :any = null
@@ -60,6 +61,7 @@ export class PatientRegisterComponent {
       } else {
          this.patientList = []
       }
+      this.showlist = true
     })
   }
 
@@ -264,6 +266,7 @@ export class PatientRegisterComponent {
         console.log(data, 'data22');
         this.toastr.success('Patient Updated Successfully')
         this.spinner.hide()
+        this.router.navigate(['patientAppoint', data.id])
       })
     }
   
@@ -410,24 +413,18 @@ changeNation(dd:any) {
 }
     
 ngAfterViewInit(){
-  $('#nationSelect').on('change', (event:any) => {
+  $('#nationSelect')
+      .on('select2:open', function () {
+        console.log('wsdax11');
+        $('input.select2-search__field')[0].focus()
+      })
+      .on('change', (event:any) => {
       var selectVal = parseInt(event.target.value);
       console.log(selectVal, 'sl44433capple');
       //you can use the selected value
       this.register.get('nationalityId')?.setValue(selectVal)
   });
-   $('#d1')
-      .on('select2:open', function () {
-        console.log('wsdax11');
-        $('input.select2-search__field')[0].focus()
-      })
-      .on('change', (event: any) => {
-        console.log('wsdax2211');
-        var selectVal = event.target.value;
-        console.log(selectVal, 'laboratoryPanelTestId');
-        //you can use the selected value
-        this.register.get('nationalityId')?.setValue(selectVal);
-      });
+  
 }
 
 

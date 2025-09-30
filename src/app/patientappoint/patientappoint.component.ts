@@ -209,7 +209,7 @@ export class PatientappointComponent {
 
   doctorsData:any = []
   getDoctors() {
-    this.http.get(this.serverUrl + 'MasterProcess/GetPractitionerAll').subscribe((data:any) => {
+    this.http.get(this.serverUrl + 'practitionerProcess/GetPractitionerAll').subscribe((data:any) => {
       this.doctorsData = data.practitionerList.practitioner
     })
   }

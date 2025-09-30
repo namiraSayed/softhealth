@@ -33,6 +33,7 @@ export class PricelistfinalComponent {
   plForm = this.fb.group({
     priceListId: [],
     payerCategoryId: [0],
+    priceListName: [''],
     branchId: [1],
     payerId: [1],
     insuranceId: [null],
@@ -92,7 +93,7 @@ export class PricelistfinalComponent {
   draftDuplicateItemArr:any = []
   duplicateSerIdArr: any = []
   duplicateSerArr: any = []
-  isExcelUploaded = false
+  isExcelUploaded = true
   validterm: any
   invalidterm: any
   duplicateterm: any
@@ -248,6 +249,7 @@ reloadCurrentRoute() {
       this.plForm.patchValue({
         priceListId: this.priceDraftData.priceListId,
         payerCategoryId: this.priceDraftData.payerCategoryId,
+        priceListName: this.priceDraftData.priceListName,
         branchId: this.priceDraftData.branchId,
         startDate: this.priceDraftData.startDate,
         endDate: this.priceDraftData.endDate,

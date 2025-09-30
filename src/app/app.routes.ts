@@ -17,6 +17,10 @@ import { InsuranceListComponent } from './insurance-list/insurance-list.componen
 import { InsuranceFormComponent } from './insurance-form/insurance-form.component';
 import { PatientRegisterComponent } from './patient-register/patient-register.component';
 import { PatientappointComponent } from './patientappoint/patientappoint.component';
+import { LabanalyteListComponent } from './labanalyte-list/labanalyte-list.component';
+import { LabanalyteFormComponent } from './labanalyte-form/labanalyte-form.component';
+import { LabspecimenListComponent } from './labspecimen-list/labspecimen-list.component';
+import { LabspecimenFormComponent } from './labspecimen-form/labspecimen-form.component';
 export const routes: Routes = [
   {
     path: '',
@@ -52,7 +56,12 @@ export const routes: Routes = [
       { path: 'insurance/:id', component: InsuranceFormComponent },
       { path: 'register-patient', component: PatientRegisterComponent },
       { path: 'patientAppoint/:id', component: PatientappointComponent },
-
+      { path: 'labanalyte-list', component: LabanalyteListComponent },
+      { path: 'labanalyte', component: LabanalyteFormComponent },
+      { path: 'labanalyte/:id', component: LabanalyteFormComponent },
+      { path: 'labspecimen-list', component: LabspecimenListComponent },
+      { path: 'labspecimen', component: LabspecimenFormComponent },
+      { path: 'labspecimen/:id', component: LabspecimenFormComponent },
      ],
   },
   {
