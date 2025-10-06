@@ -141,12 +141,49 @@ openChild(parent: any, child: any, event: Event) {
 
   // toggle the clicked one
   child.open = !child.open;
+  console.log(child, 'chils');
+  
+  if(child.isOpen == false) {
+    console.log('route', child.menuUrl);
+    if(child.childrenList == null) {
+      // var route = child.childrenList.children[0].menuUrl
+      // console.log(route, 'adsfdwszdf');
+      this.router.navigate([child.menuUrl])
+    }
+  }
 }
+
+
 
 selectedMenu(item: any, parent: any, event: Event) {
   event.stopPropagation();
   console.log('Selected menu:', item, 'Parent:', parent);
   // navigate logic here if needed
+  // this.router.navigate([item])
+  if(item.isOpen1 == false) {
+    console.log('route1', item.menuUrl);
+    if(item.childrenList !== null) {
+      var route = item.childrenList.children[0].menuUrl
+      console.log(route, 'adsfdwszdf');
+      this.router.navigate([item.menuUrl])
+    }
+  }
+}
+
+selectedMenu1(subchild:any, item: any, parent: any, event: Event) {
+  event.stopPropagation();
+  console.log('Selected menu:',subchild, 'sub', item, 'Parent:', parent);
+  // navigate logic here if needed
+  // this.router.navigate([item])
+  console.log('route2');
+  if(subchild.isOpen1 == false) {
+    console.log('route2 no');
+     if(subchild.childrenList !== null) {
+      var route = subchild.childrenList.children[0].menuUrl
+      console.log(route, 'adsfdwszdf');
+      this.router.navigate([subchild.menuUrl])
+    }
+  }
 }
 
 
@@ -230,12 +267,37 @@ selectedMenu(item: any, parent: any, event: Event) {
     console.log(this.menuAll, 'menuall');
     // $.sidebarMenu($(".sidebar-menu"));
     this.menuAll.forEach((l: any) => {
-      if(l.childrenList?.children.length == 0)  {
+      if (l.childrenList?.children.length == 0) {
         this.menuNoChild.push(l)
       } else {
-        // l.childrenList?.children.forEach(element => {
-          
-        // });
+        l.open = false
+        l.isOpenMain = true
+        l.childrenList?.children.forEach((l1: any) => {
+          if (l1.childrenList !== null) {
+            // l1.isOpen = true
+             var fil = l1.childrenList.children.filter((obj:any) => obj.isDisplay == false);
+                if(fil.length == 0) {
+                   l1.isOpen = true
+                } else {
+                  l1.isOpen = false
+                }
+            l1.childrenList?.children.forEach((l2: any) => {
+              if (l2.childrenList !== null) {
+                var fil2 = l2.childrenList.children.filter((obj:any) => obj.isDisplay == false)
+                if(fil2.length == 0) {
+                   l2.isOpen1 = true
+                } else {
+                  l2.isOpen1 = false
+                }
+              } else {
+                l2.isOpen1 = false
+              }
+            });
+          } else {
+            l1.isOpen = false
+          }
+
+        });
         this.menuChildren.push(l)
       }
     });

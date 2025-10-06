@@ -146,9 +146,10 @@
                   <a class="cursorPoint">
                     {{ child.name }}
                     
-                    <i *ngIf="child?.childrenList  !== null"
+                    <i *ngIf="child?.isOpen == true"
                        class="arrow"
                        [ngClass]="child.open ? 'ri-arrow-down-s-line' : 'ri-arrow-right-s-line'"></i>
+                     
                   </a>
 
                   <!-- Second child level (sub-children) -->
@@ -160,6 +161,23 @@
                              (click)="selectedMenu(sub, child, $event)">
                             {{ sub.name }}
                           </a>
+                           <i *ngIf="sub?.isOpen1 == true"
+                       class="arrow"
+                       [ngClass]="sub.open ? 'ri-arrow-down-s-line' : 'ri-arrow-right-s-line'"></i>
+
+                        <!-- Third child level (sub-children) -->
+                  <ul class="treeview-menu" *ngIf="sub?.childrenList !== null" [class.show]="child.open">
+                    @for(subChild of sub?.childrenList?.children; track subChild.appMenuId) {
+                      @if(subChild.isDisplay) {
+                        <li>
+                          <a class="cursorPoint"
+                             (click)="selectedMenu1(subChild, sub, child, $event)">
+                            {{ subChild.name }}
+                          </a>
+                        </li>
+                      }
+                    }
+                  </ul>
                         </li>
                       }
                     }

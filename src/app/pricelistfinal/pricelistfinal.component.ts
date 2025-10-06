@@ -87,49 +87,50 @@ export class PricelistfinalComponent {
   }
 
 
-  draftItemData: any = []
-  draftValidItemArr: any = []
-  draftInValidItemArr:any = []
-  draftDuplicateItemArr:any = []
+  priceListItemData: any = []
+  priceValidItemArr: any = []
+  priceInValidItemArr:any = []
+  priceDuplicateItemArr:any = []
   duplicateSerIdArr: any = []
   duplicateSerArr: any = []
   isExcelUploaded = true
   validterm: any
   invalidterm: any
   duplicateterm: any
-  getDraftItemsList(data:any) {
-     this.draftItemData = data.priceListItemsData
-      if (this.draftItemData.validPriceListItems !== null && this.draftItemData.duplicatePriceListItems !== null) {
+  getPriceItemsList(data:any) {
+
+     this.priceListItemData = data.priceListItemsData
+      if (this.priceListItemData.validPriceListItems !== null && this.priceListItemData.duplicatePriceListItems !== null) {
         this.isExcelUploaded = true
         
-        if(this.draftItemData.validPriceListItems !== null) {
-          this.draftValidItemArr = this.draftItemData?.validPriceListItems?.priceListItemsList?.priceListItems 
+        if(this.priceListItemData.validPriceListItems !== null) {
+          this.priceValidItemArr = this.priceListItemData?.validPriceListItems?.priceListItemsList?.priceListItems 
         } else {
-          this.draftValidItemArr = []
+          this.priceValidItemArr = []
         }
-         if(this.draftItemData.inValidPriceListItems !== null) {
-          this.draftInValidItemArr = this.draftItemData?.inValidPriceListItems?.priceListItemsList?.priceListItems 
+         if(this.priceListItemData.inValidPriceListItems !== null) {
+          this.priceInValidItemArr = this.priceListItemData?.inValidPriceListItems?.priceListItemsList?.priceListItems 
           // this.getServices()
         } else {
-          this.draftInValidItemArr = []
+          this.priceInValidItemArr = []
         }
-        console.log(this.draftValidItemArr.length, 'wrad');
-        console.log(this.draftInValidItemArr.length, 'wrad');
+        console.log(this.priceValidItemArr.length, 'wrad');
+        console.log(this.priceInValidItemArr.length, 'wrad');
         
         
         var serviceIdArr: any = []
         var serviceArr: any = []
-        if (this.draftItemData.duplicatePriceListItems !== null) {
-          this.draftItemData.duplicatePriceListItems.priceListItemsList.priceListItems.forEach((element: any) => {
+        if (this.priceListItemData.duplicatePriceListItems !== null) {
+          this.priceListItemData.duplicatePriceListItems.priceListItemsList.priceListItems.forEach((element: any) => {
             if (!serviceIdArr.includes(element.serviceId)) {
-              this.draftDuplicateItemArr.push(element)
+              this.priceDuplicateItemArr.push(element)
               serviceIdArr.push(element.serviceId)
               serviceArr['SER_' + element.serviceId] = []
             }
             serviceArr['SER_' + element.serviceId].push(element)
           });
         } else {
-          this.draftDuplicateItemArr = []
+          this.priceDuplicateItemArr = []
         }
 
         this.duplicateSerIdArr = serviceIdArr
@@ -141,10 +142,35 @@ export class PricelistfinalComponent {
       }
 
       this.spinner.hide()
-      console.log(this.draftItemData, 'vALIDTW');
+      console.log(this.priceListItemData, 'vALIDTW');
    
   }
 
+  updatePriceData:any
+  updatePrice(item:any) {
+    console.log(item, 'item');
+    this.updatePriceData = item
+    $('#c1').val(item.price)
+    $('#updatePriceModal').modal('show')
+  }
+
+  updatePriceSave() {
+    console.log(this.updatePriceData, 'updatePriceData');
+    var saveObj=this.updatePriceData
+    saveObj.price = parseInt($('#c1').val())
+    saveObj.operationCode = 'U'
+    console.log(saveObj, 'saveObj');
+    this.spinner.show()
+    this.http.post(this.serverUrl + 'contractProcess/SetPriceListItems',saveObj).subscribe((data:any) => {
+      console.log(data, 'data');
+      this.spinner.hide()
+      $('#updatePriceModal').modal('hide')
+      this.toastr.success('Data updated sucessfully')
+      this.getPriceListData(this.listDraftId)
+    })
+    
+    
+  }
   
   
   today: number = Date.now();
@@ -217,10 +243,10 @@ export class PricelistfinalComponent {
     //     console.log(data, 'data');
     //     this.toastr.success('Updated sucessfully')
     //     // this.reloadCurrentRoute()
-    //     this.draftItemData = []
-    //     this.draftValidItemArr = []
-    //     this.draftInValidItemArr = []
-    //     this.draftDuplicateItemArr = []
+    //     this.priceListItemData = []
+    //     this.priceValidItemArr = []
+    //     this.priceInValidItemArr = []
+    //     this.priceDuplicateItemArr = []
     //     this.duplicateSerIdArr = []
     //     this.duplicateSerArr = []
     //     this.getPriceListData(this.listDraftId)
@@ -240,6 +266,10 @@ reloadCurrentRoute() {
 
   priceDraftData:any
   getPriceListData(id: any) {
+    this.priceListItemData = []
+    this.priceValidItemArr  = []
+    this.priceInValidItemArr = []
+    this.priceDuplicateItemArr = []
     this.http.get(this.serverUrl + 'ContractProcess/GetPriceList/' + id).subscribe((data:any) => {
       this.priceDraftData = data.priceList;
       setTimeout(() => {
@@ -258,7 +288,7 @@ reloadCurrentRoute() {
       this.spinner.hide()
 
 
-      this.getDraftItemsList(this.priceDraftData)
+      this.getPriceItemsList(this.priceDraftData)
       
 
     })
@@ -289,10 +319,10 @@ reloadCurrentRoute() {
         console.log(data, 'data');
         this.toastr.info('Updated sucessfully')
         // this.reloadCurrentRoute()
-        this.draftItemData = []
-        this.draftValidItemArr = []
-        this.draftInValidItemArr = []
-        this.draftDuplicateItemArr = []
+        this.priceListItemData = []
+        this.priceValidItemArr = []
+        this.priceInValidItemArr = []
+        this.priceDuplicateItemArr = []
         this.duplicateSerIdArr = []
         this.duplicateSerArr = []
         this.getPriceListData(this.listDraftId)
@@ -333,7 +363,7 @@ reloadCurrentRoute() {
       if(this.listDraftId !== 0) {
         this.spinner.show()
         this.getPriceListData(id)
-        // this.getDraftItemsList()
+        // this.getPriceItemsList()
       }
       // this.getlabTest(id);
     }

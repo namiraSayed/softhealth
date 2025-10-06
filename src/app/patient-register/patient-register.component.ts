@@ -82,13 +82,28 @@ export class PatientRegisterComponent {
 
   }
 
- 
+ifDocuExist = false
+ checkValu(dv:any) {
+  console.log(dv.target.value, 'checkValu');
+  var docType = this.register.get('documentTypeId')?.value
+  var docVal = dv.target.value
+  this.http.get(this.serverUrl + `patientProcess/GetPatientByDocumentTypeId/${docType}/${docVal}`).subscribe((data:any)=> {
+    console.log(data, 'data');
+    if(data.patientList.patient.length !== 0) {
+      this.ifDocuExist = true
+    } else {
+      this.ifDocuExist = false
+    }
+    console.log(this.ifDocuExist, 'ifDocuExist');
+    
+  })
+ }
   
   nationalityData: any =[]
   getCountryApi() {
     this.http.get(this.serverUrl + 'MasterProcess/GetCountryAll').subscribe((data: any) => {
       this.nationalityData = data.countryList.country
-      $('#d1').select2()
+      this.initSelect2s()
     })
   }
 
@@ -250,19 +265,24 @@ export class PatientRegisterComponent {
   
     isEdit = false
     saveForm() {
+       if(this.ifDocuExist == true) {
+         return this.toastr.error('Patient already exist', 'Invalid Data');
+      }
       this.submitted = true
       if (this.register.invalid) {
         return this.toastr.error('please enter correct data', 'Invalid Data');
       }
+     
       this.spinner.show()
       console.log(this.register.value, 'wrdf');
-      var saveOnj = this.register.value
+      var saveOnj:any = this.register.value
+      saveOnj.nationalityId = parseInt(saveOnj.nationalityId)
       if(saveOnj.patientId == null){
         saveOnj.operationCode = 'C'
       } else {
          saveOnj.operationCode = 'U'
       }
-      this.http.post(this.serverUrl + 'PatientProcess/SetPatient', saveOnj).subscribe((data:any) => {
+      this.http.post(this.serverUrl + 'patientProcess/SetPatient', saveOnj).subscribe((data:any) => {
         console.log(data, 'data22');
         this.toastr.success('Patient Updated Successfully')
         this.spinner.hide()
@@ -426,6 +446,30 @@ ngAfterViewInit(){
   });
   
 }
+
+  public initSelect2s(): void {
+    
+    // --- 1. Initialize Department Speciality (Single-Select) ---
+    const select1 = $('#d1');
+    if (select1.length) {
+      (select1 as any).select2({
+        width: '100%',
+        placeholder: 'Select Nationality'
+      });
+      select1.on('change', (e: any) => {
+        // For single-select, e.target.value is the single selected value
+        console.log(e.target.value, 'nationality selected');
+        this.register.get('nationalityId')?.setValue(e.target.value)
+      });
+    }
+
+    
+    
+    // Global Focus Fix (Recommended to keep)
+    $(document).on('focus', '.select2-container--open .select2-search__field', function (e: any) {
+        e.stopPropagation();
+    });
+  }
 
 
   ngOnInit() {

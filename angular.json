@@ -30,20 +30,21 @@
               }
             ],
             "styles": [
-              "src/styles.css",
               "node_modules/medicare/design/assets/css/main.min.css",
               "node_modules/ngx-spinner/animations/ball-scale-multiple.css",
               "node_modules/ngx-toastr/toastr.css",
+              "node_modules/select2/dist/css/select2.min.css",
               "node_modules/medicare/design/assets/fonts/remix/remixicon.css",
               "node_modules/medicare/design/assets/vendor/overlay-scroll/OverlayScrollbars.min.css",
-              "node_modules/medicare/design/assets/vendor/select2/css/select2.min.css"
+              "src/styles.css",
+              "public/css/select2-custom.css" 
             ],
             "scripts": [
               "node_modules/medicare/design/assets/js/jquery.min.js",
               "node_modules/medicare/design/assets/js/custom.js",
               "node_modules/medicare/design/assets/js/bootstrap.bundle.min.js",
+              "node_modules/select2/dist/js/select2.min.js",
               "node_modules/medicare/design/assets/js/moment.min.js",
-              "node_modules/medicare/design/assets/vendor/select2/js/select2.full.min.js",
               "node_modules/medicare/design/assets/vendor/overlay-scroll/jquery.overlayScrollbars.min.js",
               "node_modules/medicare/design/assets/vendor/overlay-scroll/custom-scrollbar.js"
             ]

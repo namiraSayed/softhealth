@@ -7,8 +7,11 @@
         <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
         <a routerLink="/home">Home</a>
       </li>
-      <li class="breadcrumb-item text-primary" aria-current="page">
+      <li class="breadcrumb-item text-primary" routerLink="/register-patient">
         {{'Register' | translate}}
+      </li>
+      <li class="breadcrumb-item text-primary" aria-current="page">
+        {{'Patient-Appointment' | translate}}
       </li>
     </ol>
     <!-- Breadcrumb ends -->
@@ -159,15 +162,16 @@
       @for (payerP of patientData?.payerCategoryList.payerCategory; track $index) {
       <div class="accordion-item">
         <h2 class="accordion-header">
-          <button class="accordion-button" type="button" [class.collapsed]="activeIndex !== $index"
+          <button class="accordion-button" type="button" [class.collapsed]="!payerState[$index]"
             (click)="toggleItem($index, payerP)">
-            <strong> {{ payerP.payerCategoryName }}</strong>
+            <strong>{{ payerP.payerCategoryName }}</strong>
           </button>
         </h2>
 
-        <!-- Main section -->
-        <div class="accordion-collapse" [class.show]="activeIndex === $index">
+        <div class="accordion-collapse" [class.show]="payerState[$index]">
           <div class="accordion-body">
+
+            <!-- Insurance / Cash buttons -->
             @if(payerP.payerCategoryCode == 'insurance') {
             <div class="row">
               <div class="col text-end">
@@ -175,27 +179,22 @@
               </div>
             </div>
             }
-
             @if(payerP.payerCategoryCode !== 'insurance') {
             <div class="row">
               <div class="col">
-                <button class="btn btn-primary btn-sm ms-2" (click)="newTreatment(payerP,0, 'cash')">New
+                <button class="btn btn-primary btn-sm ms-2" (click)="newTreatment(payerP,0,'cash')">New
                   Treatment</button>
               </div>
             </div>
-
-
             }
-
-            <!-- <p>{{ payerP.payerCategoryName }}</p> -->
 
             <!-- Nested accordion -->
             <div class="accordion mt-2" *ngIf="payerP.patientCoverageList?.patientCoverage !== null">
               <div class="accordion-item"
                 *ngFor="let sub of payerP.patientCoverageList?.patientCoverage; let $subIndex = index">
                 <h2 class="accordion-header">
-                  <button class="accordion-button accordion-button-sm" type="button"
-                    [class.collapsed]="subActive[$index] !== $subIndex" (click)="toggleSubItem($index, $subIndex, sub)">
+                  <button class="accordion-button accordion-button-sm" [class.collapsed]="!subState[$index][$subIndex]"
+                    (click)="toggleSubItem($index, $subIndex, sub)">
                     <div class="d-flex flex-wrap">
                       <div class="p-2"><span class="modalLabel">Company:</span> {{sub?.insurance?.insuranceName}}</div>
                       <div class="p-2"><span class="modalLabel">Policy No.:</span>
@@ -214,41 +213,27 @@
                         }
                         }
                       </div>
-                      <div class="p-2"><span class="modalLabel">Expiry Date:</span>
-                        @for(cover of sub?.insurance.insuranceCoverageList?.insuranceCoverage; track
-                        cover.insuranceCoverageId) {
-                        @if(cover.insuranceCoverageId == sub.insuranceCoverageId) {
-                        {{cover?.endDate | date: 'dd/MM/YYYY'}}
-                        }
-                        }
-                      </div>
                       <div class="p-2"><span class="modalLabel">Class:</span>
                         @for(cover of sub?.insurance.insuranceCoverageList?.insuranceCoverage; track
                         cover.insuranceCoverageId) {
-                        @for(class of cover?.insuranceCoverageClassList?.insuranceCoverageClass; track
-                        class.insuranceCoverageClassId) {
-                        @if(class.insuranceCoverageId == cover.insuranceCoverageId) {
-                        {{class?.class}}
-                        }
+                        @if(cover.insuranceCoverageId == sub.insuranceCoverageId) {
+                        {{cover.insuranceCoverageClassList?.insuranceCoverageClass[0]?.class}}
                         }
                         }
                       </div>
-                      <div class="p-2"><span class="modalLabel">Relation:</span> {{sub?.subscriberRelationship}} </div>
-                      <!-- <div class="px-2"> <button class="btn btn-warning btn-sm"
-                          (click)="eligibleFun(sub)">Eligibility</button> </div> -->
+                      <div class="p-2"><span class="modalLabel">Relation:</span> {{sub?.subscriberRelationship}}</div>
+                      <div class=""><button type="button" class="btn btn-warning btn-sm"
+                          (click)="eligibleFun(sub); $event.stopPropagation()">Eligibility</button></div>
                     </div>
                   </button>
                 </h2>
 
-                <!-- Sub section -->
-                <div class="accordion-collapse" [class.show]="subActive[$index] === $subIndex">
+                <div class="accordion-collapse" [class.show]="subState[$index][$subIndex]">
                   <div class="accordion-body">
+                    <button class="btn btn-primary btn-sm ms-2" (click)="newTreatment(payerP,sub,'ins')">New
+                      Treatment</button>
 
-                    <div class="col">
-                      <button class="btn btn-primary btn-sm ms-2" (click)="newTreatment(payerP,sub,'ins')">New
-                        Treatment</button>
-                    </div>
-                    @if(showSubTable == true) {
+                    @if(sub.showSubTable == true) {
                     <div class="table-outer mt-3">
                       <div class="table-responsive">
                         <table class="table truncate m-0">
@@ -262,11 +247,15 @@
                             </tr>
                           </thead>
                           <tbody>
-                            @for(encount of subTableData; track encount.patientEncounterId) {
+                            @if (patientData.encounterForBilling !== null) {
+                            @if (patientData.encounterForBilling.patientEncounterList !== null) {
+                            @for(encount of patientData.encounterForBilling.patientEncounterList.patientEncounter; track
+                            encount.patientEncounterId) {
+                            @if(encount.patientCoverageId == sub.patientCoverageId) {
                             <tr>
                               <td>{{encount.scheduledDateTime | date: 'dd/MM/YYYY'}}</td>
                               <td>{{encount.encounterNumber}}</td>
-                              <td>{{encount.practitionerName}}{{encount.practitionerId}}</td>
+                              <td>{{encount.practitionerName}}</td>
                               <td>
                                 @for(condition of encount?.encounterClinicalConditionList?.patientClinicalCondition;
                                 track condition.patientClinicalConditionId) {
@@ -275,21 +264,30 @@
                               </td>
 
                               <td class="p-1">
-                                <button class="btn btn-info btn-sm">Bill Service</button>
+                                @if(encount.pendingServices?.orderPractitionerService !== null) {
+                                  <button class="btn btn-info btn-sm">Bill Service</button>
+                                }
                               </td>
                             </tr>
                             }
+                            }
+                            }
+
+                            }
+
+
+
 
                           </tbody>
                         </table>
                       </div>
                     </div>
                     }
-
                   </div>
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       </div>
@@ -298,14 +296,16 @@
 
 
 
+
   </div>
 </div>
 
-<div class="modal fade" id="newEncounterModal" tabindex="-1" aria-labelledby="exampleModalXlLabel" aria-hidden="true">
+<div class="modal fade" id="newEncounterModal" tabindex="-1" aria-labelledby="newEncounterModalLabel"
+  aria-hidden="true">
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalXlLabel">
+        <h5 class="modal-title" id="newEncounterModalLabel">
           {{'Encounter' | translate}}
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -316,8 +316,8 @@
           <div class="row gx-3 mt-1 align-items-center">
             <div class="col-xxl-2 col-lg-2 col-sm-4">
               <div class="mb-3">
-                <label class="form-label" for="a3">Encounter Type </label>
-                <select class="form-select" id="a3" class="form-control" formControlName="encounterTypeId"
+                <label class="form-label" for="n1">Encounter Type </label>
+                <select class="form-select" id="n1" class="form-control" formControlName="encounterTypeId"
                   (change)="selEncounType($event)"
                   [ngClass]="{ 'is-invalid': submitted && encounterForm.controls.encounterTypeId.errors }">
                   <option value="null" selected disabled>Select</option>
@@ -326,15 +326,15 @@
                   </option>
                 </select>
                 <div *ngIf="submitted && encounterForm.controls.encounterTypeId.errors" class="invalid-feedback">
-                  <div *ngIf="encounterForm.controls.encounterTypeId.errors?.['required']">Please Select 
+                  <div *ngIf="encounterForm.controls.encounterTypeId.errors?.['required']">Please Select
                   </div>
                 </div>
               </div>
             </div>
             <div class="col-xxl-2 col-lg-2 col-sm-4">
               <div class="mb-3">
-                <label class="form-label" for="a3">Encounter Class </label>
-                <select class="form-select" id="a3" class="form-control" formControlName="encounterClassId"
+                <label class="form-label" for="n2">Encounter Class </label>
+                <select class="form-select" id="n2" class="form-control" formControlName="encounterClassId"
                   [ngClass]="{ 'is-invalid': submitted && encounterForm.controls.encounterClassId.errors }">
                   <option value="null" selected disabled>Select </option>
                   <option *ngFor="let item of encounterClassData" value="{{item.dropdownValueId}}">
@@ -349,8 +349,8 @@
             </div>
             <div class="col-xxl-2 col-lg-2 col-sm-4">
               <div class="mb-3">
-                <label class="form-label" for="a3">Encounter Priority </label>
-                <select class="form-select" id="a3" class="form-control" formControlName="encounterPriorityId"
+                <label class="form-label" for="n4">Encounter Priority </label>
+                <select class="form-select" id="n4" class="form-control" formControlName="encounterPriorityId"
                   [ngClass]="{ 'is-invalid': submitted && encounterForm.controls.encounterPriorityId.errors }">
                   <option value="null" selected disabled>Select</option>
                   <option *ngFor="let item of encounterPriorityData" value="{{item.dropdownValueId}}">
@@ -364,8 +364,8 @@
             </div>
             <div class="col-xxl-3 col-lg-3 col-sm-4">
               <div class="mb-3">
-                <label class="form-label" for="a3">Encounter Service Type</label>
-                <select class="form-select" id="a3" class="form-control" formControlName="encounterServiceTypeId"
+                <label class="form-label" for="n5">Encounter Service Type</label>
+                <select class="form-select" id="n5" class="form-control" formControlName="encounterServiceTypeId"
                   [ngClass]="{ 'is-invalid': submitted && encounterForm.controls.encounterServiceTypeId.errors }">
                   <option value="null" selected disabled>Select</option>
                   <option *ngFor="let item of encServiceTypeData" value="{{item.dropdownValueId}}">
@@ -379,9 +379,9 @@
             </div>
             <div class="col-xxl-3 col-lg-3 col-sm-4">
               <div class="mb-3">
-                <label class="form-label" for="a3">Encounter Service Event Type<span
+                <label class="form-label" for="n6">Encounter Service Event Type<span
                     class="text-danger">*</span></label>
-                <select class="form-select" id="a3" class="form-control" formControlName="encounterServiceEventTypeId"
+                <select class="form-select" id="n6" class="form-control" formControlName="encounterServiceEventTypeId"
                   [ngClass]="{ 'is-invalid': submitted && encounterForm.controls.encounterServiceEventTypeId.errors }">
                   <option value="null" selected disabled>Select </option>
                   <option *ngFor="let item of encSerEveTypeData" value="{{item.dropdownValueId}}">
@@ -390,7 +390,8 @@
                 </select>
                 <div *ngIf="submitted && encounterForm.controls.encounterServiceEventTypeId.errors"
                   class="invalid-feedback">
-                  <div *ngIf="encounterForm.controls.encounterServiceEventTypeId.errors?.['required']">Please Select</div>
+                  <div *ngIf="encounterForm.controls.encounterServiceEventTypeId.errors?.['required']">Please Select
+                  </div>
                 </div>
               </div>
             </div>
@@ -406,8 +407,8 @@
           <div class="row gx-3 mt-1 align-items-center" *ngIf="isEmergency">
             <div class="col-xxl-3 col-lg-3 col-sm-4">
               <div class="mb-3">
-                <label class="form-label" for="a3">Emergency Arrival Code</label>
-                <select class="form-select" id="a3" class="form-control">
+                <label class="form-label" for="n7">Emergency Arrival Code</label>
+                <select class="form-select" id="n7" class="form-control" formControlName="emergencyArrivalCodeId">
                   <option value="null" selected disabled>Select</option>
                   <option *ngFor="let item of emergencyArrivalData" value="{{item.dropdownValueId}}">
                     {{item.value}}
@@ -417,14 +418,15 @@
             </div>
             <div class="col-xxl-2 col-lg-2 col-sm-4">
               <div class="mb-3">
-                <label class="form-label" for="a3">Service Startdate</label>
-                <input type="date" class="form-control" id="a3">
+                <label class="form-label" for="n9">Service Startdate</label>
+                <input type="date" class="form-control" id="n9" formControlName="emergencyStartDate">
               </div>
             </div>
             <div class="col-xxl-3 col-lg-3 col-sm-4">
               <div class="mb-3">
-                <label class="form-label" for="a3">Emergency Department Disposition</label>
-                <select class="form-select" id="a3" class="form-control">
+                <label class="form-label" for="n10">Emergency Department Disposition</label>
+                <select class="form-select" id="n10" class="form-control"
+                  formControlName="emergencyDepartmentDispositionId">
                   <option value="null" selected disabled>Select</option>
                   <option *ngFor="let item of emergencyDepDisData" value="{{item.dropdownValueId}}">
                     {{item.value}}
@@ -434,8 +436,8 @@
             </div>
             <div class="col-xxl-2 col-lg-2 col-sm-4">
               <div class="mb-3">
-                <label class="form-label" for="a3">Triage Type</label>
-                <select class="form-select" id="a3" class="form-control" formControlName="triageTypeId">
+                <label class="form-label" for="n11">Triage Type</label>
+                <select class="form-select" id="n11" class="form-control" formControlName="triageTypeId">
                   <option value="null" selected disabled>Select</option>
                   <option *ngFor="let item of triageTypeData" value="{{item.dropdownValueId}}">
                     {{item.value}}
@@ -445,26 +447,66 @@
             </div>
             <div class="col-xxl-2 col-lg-2 col-sm-4">
               <div class="mb-3">
-                <label class="form-label" for="a3">Traige Date</label>
-                <input type="date" class="form-control" id="a3">
+                <label class="form-label" for="n12">Traige Date</label>
+                <input type="date" class="form-control" id="n12" formControlName="triageDate">
               </div>
             </div>
           </div>
           <div class="row gx-3 mt-1 align-items-center">
-            <div class="col-xxl-5 col-lg-5 col-sm-6">
+            <div class="col-xxl-6 col-lg-6 col-sm-12">
               <div class="mb-3">
-                <label class="form-label" for="a3">Practitioner</label>
-                <select class="form-select" id="a3" class="form-control" formControlName="practitionerId" [ngClass]="{ 'is-invalid': submitted && encounterForm.controls.practitionerId.errors }">
+                <label class="form-label" for="n13">Department Speciality</label>
+                <select class="form-select" id="n13" class="form-control" style="width:100%"
+                  formControlName="departmentSpecialityId"
+                  [ngClass]="{ 'is-invalid': submitted && encounterForm.controls.departmentSpecialityId.errors }">
+                  <option value="null">Select</option>
+                  <option *ngFor="let item of depSpecialData" value="{{item.departmentSpecialityId}}">
+                    {{item.departmentSpeciality}}
+                  </option>
+                </select>
+                <div *ngIf="submitted && encounterForm.controls.departmentSpecialityId.errors" class="invalid-feedback">
+                  <div *ngIf="encounterForm.controls.departmentSpecialityId.errors?.['required']">Please Select
+                    Department Speciality
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xxl-6 col-lg-6 col-sm-12">
+              <div class="mb-3">
+                <label class="form-label" for="n14">Practitioner</label>
+                <select class="form-select" id="n14" class="form-control" formControlName="practitionerId"
+                  [ngClass]="{ 'is-invalid': submitted && encounterForm.controls.practitionerId.errors }">
                   <option value="null">Select</option>
                   <option *ngFor="let item of doctorsData" value="{{item.practitionerId}}">
                     {{item.displayName}}
                   </option>
                 </select>
-                 <div *ngIf="submitted && encounterForm.controls.practitionerId.errors" class="invalid-feedback">
-                  <div *ngIf="encounterForm.controls.practitionerId.errors?.['required']">Please Select Practitioner</div>
+                <div *ngIf="submitted && encounterForm.controls.practitionerId.errors" class="invalid-feedback">
+                  <div *ngIf="encounterForm.controls.practitionerId.errors?.['required']">Please Select Practitioner
+                  </div>
                 </div>
               </div>
             </div>
+          </div>
+          <div class="row gx-3 mt-1 align-items-center">
+            <div class="col-xxl-12 col-lg-12 col-sm-12">
+              <div class="mb-3">
+                <label class="form-label" for="n15">Clinical Condition</label>
+                <select class="form-select" id="n15" class="form-control" style="width:100%"
+                  formControlName="clinicalConditionId"
+                  [ngClass]="{ 'is-invalid': submitted && encounterForm.controls.clinicalConditionId.errors }" multiple>
+                  <option value="null">Select</option>
+                  <option *ngFor="let item of clinicalCondtionData" value="{{item.dropdownValueId}}">
+                    {{item.value}}
+                  </option>
+                </select>
+                <div *ngIf="submitted && encounterForm.controls.clinicalConditionId.errors" class="invalid-feedback">
+                  <div *ngIf="encounterForm.controls.clinicalConditionId.errors?.['required']">Please Select Clinical
+                    Condition</div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </form>
         <div class="col-sm-12">
@@ -479,7 +521,7 @@
 </div>
 
 <div class="modal fade" id="eligibilityModal" tabindex="-1" aria-labelledby="exampleModalXlLabel" aria-hidden="true">
-  <div class="modal-dialog modal-xl">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalXlLabel">
@@ -489,121 +531,91 @@
       </div>
       <div class="modal-body">
         <!-- Row Start -->
-        <form [formGroup]="coverForm">
+        <form [formGroup]="eligibleForm">
           <div class="row gx-3 mt-1 align-items-center">
+
+            <div class="col-xxl-12 col-lg-12 col-sm-6">
+              <div class="mb-3">
+                <div class="form-check form-switch mt-4">
+                  <input class="form-check-input" type="checkbox" role="switch" formControlName="isEligible" id="e1">
+                  <label class="form-check-label" for="e1">{{'Is Eligible' | translate}}</label>
+                </div>
+              </div>
+            </div>
+
             <div class="col-xxl-4 col-lg-4 col-sm-6">
               <div class="mb-3">
-                <label class="form-label" for="a3">Insurance <span class="text-danger">*</span></label>
-                <select class="form-select" id="a3" class="form-control" formControlName="insuranceId"
-                  [ngClass]="{ 'is-invalid': submitted && coverForm.controls.insuranceId.errors }">
-                  <option value="null">Select Insurance</option>
-                  <option *ngFor="let item of insuranceData" [ngValue]="item.insuranceId">
-                    {{item.insuranceName}}
-                  </option>
-                </select>
-                <div *ngIf="submitted && coverForm.controls.insuranceId.errors" class="invalid-feedback">
-                  <div *ngIf="coverForm.controls.insuranceId.errors?.['required']">Please Select insuranceId
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-xxl-4 col-lg-4 col-sm-6">
-              <div class="mb-3">
-                <label class="form-label" for="a3">Insurance Coverage <span class="text-danger">*</span></label>
-                <select class="form-select" id="a3" class="form-control" formControlName="insuranceCoverageId"
-                  [ngClass]="{ 'is-invalid': submitted && coverForm.controls.insuranceCoverageId.errors }">
-                  <option value="null">Select Insurance Coverage</option>
-                  <option *ngFor="let item of insCoverageData" [ngValue]="item.insuranceCoverageId">
-                    ({{item.policyNo}}) {{item.policyHolder}}
-                  </option>
-                </select>
-                <div *ngIf="submitted && coverForm.controls.insuranceCoverageId.errors" class="invalid-feedback">
-                  <div *ngIf="coverForm.controls.insuranceCoverageId.errors?.['required']">Please Select
-                    insuranceCoverageId
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-xxl-3 col-lg-3 col-sm-6">
-              <div class="mb-3">
-                <label class="form-label" for="a3">InsuranceCoverage Class<span class="text-danger">*</span></label>
-                <select class="form-select" id="a3" class="form-control" formControlName="insuranceCoverageClassId"
-                  [ngClass]="{ 'is-invalid': submitted && coverForm.controls.insuranceCoverageClassId.errors }">
-                  <option value="null">Select InsuranceCoverage Class</option>
-                  <option *ngFor="let item of insCoverageClassData" [ngValue]="item.insuranceCoverageId">
-                    {{item.class}}
-                  </option>
-                </select>
-                <div *ngIf="submitted && coverForm.controls.insuranceCoverageClassId.errors" class="invalid-feedback">
-                  <div *ngIf="coverForm.controls.insuranceCoverageClassId.errors?.['required']">Please Select
-                    insuranceCoverage Class
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-xxl-3 col-lg-3 col-sm-6">
-              <div class="mb-3">
-                <label class="form-label" for="a3">Relationship <span class="text-danger">*</span></label>
-                <select class="form-select" id="a3" class="form-control" formControlName="subscriberRelationshipId"
-                  [ngClass]="{ 'is-invalid': submitted && coverForm.controls.subscriberRelationshipId.errors }">
-                  <option value="null">Select Relationship</option>
-                  <option *ngFor="let item of relationData" value="{{item.dropdownValueId}}">
-                    {{item.value}}
-                  </option>
-                </select>
-                <div *ngIf="submitted && coverForm.controls.subscriberRelationshipId.errors" class="invalid-feedback">
-                  <div *ngIf="coverForm.controls.subscriberRelationshipId.errors?.['required']">Please Select
-                    subscriberRelationshipId
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-xxl-3 col-lg-3 col-sm-6">
-              <div class="mb-3">
-                <label class="form-label" for="a2">{{'Membership No.' | translate}}<span
+                <label class="form-label" for="e2">{{'Eligibility Reference No.' | translate}}<span
                     class="text-danger">*</span></label>
                 <div class="input-group">
-                  <input type="text" class="form-control" formControlName="memberId" id="a2"
-                    placeholder="{{'Enter memberId' | translate}}"
-                    [ngClass]="{'is-invalid': submitted && coverForm.controls.memberId.errors}">
-                  <div *ngIf="submitted && coverForm.controls.memberId.errors" class="invalid-feedback">
-                    <div *ngIf="coverForm.controls.memberId.errors?.['required']">
-                      {{'memberId is required.' | translate}}</div>
+                  <input type="text" class="form-control" formControlName="eligibilityReferenceNo" id="e2"
+                    placeholder="{{'Enter Eligibility Reference No.' | translate}}"
+                    [ngClass]="{'is-invalid': submittedE && eligibleForm.controls.eligibilityReferenceNo.errors}">
+                  <div *ngIf="submittedE && eligibleForm.controls.eligibilityReferenceNo.errors"
+                    class="invalid-feedback">
+                    <div *ngIf="eligibleForm.controls.eligibilityReferenceNo.errors?.['required']">
+                      {{'Eligibility Reference No. is required.' | translate}}</div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="col-xxl-2 col-lg-2 col-sm-6">
+            <div class="col-xxl-4 col-lg-4 col-sm-6">
               <div class="mb-3">
-                <div class="form-check form-switch mt-4">
-                  <input class="form-check-input" type="checkbox" role="switch" formControlName="inForce" id="12">
-                  <label class="form-check-label" for="12">{{'In Force' | translate}}</label>
+                <label class="form-label" for="e3">{{'Eligibility Response Id' | translate}}<span
+                    class="text-danger">*</span></label>
+                <div class="input-group">
+                  <input type="text" class="form-control" formControlName="eligibilityResponseId" id="e3"
+                    placeholder="{{'Enter Eligibility Response Id' | translate}}"
+                    [ngClass]="{'is-invalid': submittedE && eligibleForm.controls.eligibilityResponseId.errors}">
+                  <div *ngIf="submittedE && eligibleForm.controls.eligibilityResponseId.errors"
+                    class="invalid-feedback">
+                    <div *ngIf="eligibleForm.controls.eligibilityResponseId.errors?.['required']">
+                      {{'Eligibility Response Id is required.' | translate}}</div>
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="col-xxl-2 col-lg-2 col-sm-6">
+            <div class="col-xxl-4 col-lg-4 col-sm-6">
               <div class="mb-3">
-                <div class="form-check form-switch mt-4">
-                  <input class="form-check-input" type="checkbox" role="switch" formControlName="isVerified" id="12">
-                  <label class="form-check-label" for="12">{{'Is Verified' | translate}}</label>
+                <label class="form-label" for="e4">{{'Eligibility IdentifierUrl' | translate}}<span
+                    class="text-danger">*</span></label>
+                <div class="input-group">
+                  <input type="text" class="form-control" formControlName="eligibilityIdentifierURL" id="e4"
+                    placeholder="{{'Enter Eligibility IdentifierUrl' | translate}}"
+                    [ngClass]="{'is-invalid': submittedE && eligibleForm.controls.eligibilityIdentifierURL.errors}">
+                  <div *ngIf="submittedE && eligibleForm.controls.eligibilityIdentifierURL.errors"
+                    class="invalid-feedback">
+                    <div *ngIf="eligibleForm.controls.eligibilityIdentifierURL.errors?.['required']">
+                      {{'Eligibility IdentifierUrl is required.' | translate}}</div>
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="col-xxl-2 col-lg-2 col-sm-6">
+
+
+            <div class="col-xxl-12 col-lg-12 col-sm-6">
               <div class="mb-3">
-                <div class="form-check form-switch mt-4">
-                  <input class="form-check-input" type="checkbox" role="switch" formControlName="isActive" id="10">
-                  <label class="form-check-label" for="10">{{'Status' | translate}}</label>
+                <label class="form-label" for="e5">{{'Eligibility Attachment' | translate}}<span
+                    class="text-danger">*</span></label>
+                <div class="input-group">
+                  <input type="file" class="form-control" formControlName="eligibilityAttachment" id="e5"
+                    [ngClass]="{'is-invalid': submittedE && eligibleForm.controls.eligibilityAttachment.errors}">
+                  <div *ngIf="submittedE && eligibleForm.controls.eligibilityAttachment.errors"
+                    class="invalid-feedback">
+                    <div *ngIf="eligibleForm.controls.eligibilityAttachment.errors?.['required']">
+                      {{'Eligibility Attachment is required.' | translate}}</div>
+                  </div>
                 </div>
               </div>
             </div>
+
           </div>
         </form>
         <div class="col-sm-12">
           <div class="d-flex gap-2 justify-content-end">
             <a type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</a>
-            <a type="button" class="btn btn-primary" (click)="saveCoverage()">Save</a>
+            <a type="button" class="btn btn-primary" (click)="saveEligibilty()">Save</a>
           </div>
         </div>
       </div>

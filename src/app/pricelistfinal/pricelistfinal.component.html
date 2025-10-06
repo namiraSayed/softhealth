@@ -145,17 +145,19 @@
                                 <th>{{'Price' | translate}}</th>
                                 <th class="text-center">{{'Discount Per' | translate}}</th>
                                 <th>{{'Validation Remarks' | translate}}</th>
+                                <th>Action</th>
                               </tr>
                             </thead>
                             <tbody>
-                              <tr *ngFor="let item of draftValidItemArr | filter: validterm: 'description'">
+                              <tr *ngFor="let item of priceValidItemArr | filter: validterm: 'description'">
                                 <td>{{item.sbsCode}}</td>
                                 <td>[{{item.code}}] {{item.description}}</td>
                                 <td>{{item.price}}</td>
                                 <td class="text-center">{{item.discountPct}}%</td>
                                 <td>{{item.validationRemarks}}</td>
+                                <td> <button class="btn btn-outline-primary btn-sm" (click)="updatePrice(item)">Update Price</button>  </td>
                               </tr>
-                              <tr *ngIf="draftValidItemArr.length == 0">
+                              <tr *ngIf="priceValidItemArr.length == 0">
                                 <td colspan="5"> No Data Found</td>
                               </tr>
                             </tbody>
@@ -189,7 +191,7 @@
                               </tr>
                             </thead>
                             <tbody>
-                              <tr *ngFor="let item of draftInValidItemArr | filter: invalidterm: 'description'">
+                              <tr *ngFor="let item of priceInValidItemArr | filter: invalidterm: 'description'">
                                 <td>{{item.sbsCode}}</td>
                                 <td>[{{item.code}}] {{item.description}}</td>
                                 <td>{{item.price}}</td>
@@ -199,7 +201,7 @@
                                   <button class="btn btn-outline-primary table-btn" (click)="invalidAction(item)">Add Service</button>
                                 </td>
                               </tr>
-                              <tr *ngIf="draftInValidItemArr.length == 0">
+                              <tr *ngIf="priceInValidItemArr.length == 0">
                                 <td colspan="5"> No Data Found</td>
                               </tr>
                             </tbody>
@@ -305,7 +307,7 @@
                               </tr>
                             </thead>
                             <tbody>
-                              <tr *ngFor="let item of draftDuplicateItemArr | filter: duplicateterm: 'sbsCode'">
+                              <tr *ngFor="let item of priceDuplicateItemArr | filter: duplicateterm: 'sbsCode'">
                                 <td>{{item.sbsCode}}</td>
                                 <td>
                                   <div *ngFor="let dupli of duplicateSerArr['SER_' + item.serviceId]">
@@ -319,10 +321,10 @@
                                 </td>
                                 <td>{{item.validationRemarks}}</td>
                                 <td>
-                                  <button class="btn btn-outline-primary btn-sm" (click)="updateDup(item)">Insert</button>
+                                  <!-- <button class="btn btn-outline-primary btn-sm" (click)="updateDup(item)">Insert</button> -->
                                 </td>
                               </tr>
-                              <tr *ngIf="draftDuplicateItemArr.length == 0">
+                              <tr *ngIf="priceDuplicateItemArr.length == 0">
                                 <td colspan="5"> No Data Found</td>
                               </tr>
                             </tbody>
@@ -341,9 +343,33 @@
       </div>
     </div>
     }
-   
-<!-- <div id="mybutton">
-<button class="btn btn-success" (click)="approveDraft()">Approve Draft </button>
-</div> -->
+    <div class="modal fade" id="updatePriceModal" tabindex="-1" aria-labelledby="exampleModalXlLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalXlLabel">
+                {{'Update Price' | translate}}
+              </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="row gx-3 mt-1 ">
+                <div class="col-xxl-6 col-lg-6 col-sm-6">
+                  <div class="mb-3">
+                    <label class="form-label" for="c1">Price</label>
+                    <input type="text" class="form-control" id="c1" placeholder="Enter Price">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <div class="d-flex gap-2 justify-content-end">
+                <a type="button" class="btn btn-outline-secondary">Cancel</a>
+                <a type="button" class="btn btn-primary" (click)="updatePriceSave()">Update</a>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
   </div>
 </div>

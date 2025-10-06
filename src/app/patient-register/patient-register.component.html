@@ -16,23 +16,41 @@
 	<div class="app-body">
 		<!-- Row starts -->
 		<div class="row gx-3" *ngIf="isNewPatient == false">
-			<div class="col-sm-12 col-12">
+			<div class="col-sm-8 col-8">
 				<div class="card mb-3">
 					<div class="card-header">
 						<h5 class="card-title">Register</h5>
 					</div>
+          <div class="card-body pt-0">
+            <div class="d-flex flex-wrap align-items-center">
+              <div class="p-2">
+                <button type="button" class="btn btn-outline-primary mt-3" (click)="newPatient()">
+                  New Patient
+                </button>
+              </div>
+              <div class="p-2 pt-0 col-10">
+                 <label class="form-label filterLabel">Keyword:</label>
+                <input type="text" class="form-control" (keyup)="onSearchKey($event)" id="searchd"
+                  placeholder="Search Patient by Id, Name, Mobile No.">
+              </div>
+            </div>
+           
+          </div>
+				</div>
+			</div>
+      	<div class="col-sm-4 col-4">
+				<div class="card mb-3">
+					<div class="card-header">
+						<h5 class="card-title">Token</h5>
+					</div>
 					<div class="card-body pt-0">
 						<div class="row gx-3 align-items-center">
-							<div class="col-xl-10 col-sm-12 col-md-8">
+							<div class="col-xl-12 col-sm-12 col-md-12 p-1">
 								<label class="form-label filterLabel">Keyword:</label>
-								<input type="text" class="form-control" (keyup)="onSearchKey($event)" id="searchd"
-									placeholder="Search Patient by Id, Name, Mobile No.">
+								<input type="text" class="form-control" (keyup)="onSearchKey($event)" id="searchToken"
+									placeholder="Search Token">
 							</div>
-							<div class="col-xl-2 col-sm-12 col-md-4 text-end">
-								<button type="button" class="btn btn-outline-primary mt-2" (click)="newPatient()">
-									New Patient
-								</button>
-							</div>
+							
 						</div>
 					</div>
 				</div>
@@ -45,7 +63,6 @@
     <div class="row gx-3" *ngIf="isNewPatient == false">
 			<div class="col-sm-12">
 				<div class="card">
-
 					<div class="card-body">
 						<div class="table-responsive">
 							<table class="table truncate m-0 align-middle">
@@ -64,7 +81,7 @@
 								</thead>
 								<tbody>
 									@for(patient of patientList; track patient.patientId) {
-									<tr>
+									<tr class="cursorPoint" (click)="selectPatient(patient)">
 										<td>{{patient.emrNo}}</td>
 										<td>{{patient.firstName}} {{patient.lastName}}</td>
 										<td>
@@ -86,7 +103,7 @@
 													data-bs-toggle="modal" data-bs-target="#delRow">
 													<i class="ri-delete-bin-line"></i>
 												</button> -->
-												<a (click)="editPt(patient)"
+												<a (click)="editPt(patient);$event.stopPropagation()"
 													class="btn btn-outline-success btn-sm table-btn"
 													data-bs-toggle="tooltip" data-bs-placement="top"
 													data-bs-title="Edit Patient Details">
@@ -97,10 +114,9 @@
 													data-bs-title="View Dashboard">
 													<i class="ri-eye-line"></i>
 												</a> -->
-												<button class="btn btn-outline-primary btn-sm table-btn"
-													(click)="selectPatient(patient)">
+												<!-- <button class="btn btn-outline-primary btn-sm table-btn">
 													Continue
-												</button>
+												</button> -->
 											</div>
 										</td>
 									</tr>
@@ -211,10 +227,17 @@
 															<div class="mb-3">
 																<label class="form-label" for="a12">Document Value <span
 																		class="text-danger">*</span></label>
-																<input type="text" class="form-control "
+																<input type="text" class="form-control " (change)="checkValu($event)"
 																	formControlName="documentValue" id="a12"
 																	placeholder="Enter Document Value"
 																	[ngClass]="{ 'is-invalid': submitted && register.controls.documentValue.errors }">
+                                  <div *ngIf="ifDocuExist" class="text-danger">
+                                    Patient Already Exist
+																	</div>
+																	<div *ngIf="submitted && register.controls.firstName.errors" class="invalid-feedback">
+																	<div *ngIf="register.controls.firstName.errors?.['required']">
+																		First Name is required.</div>
+																</div>
 															</div>
 														</div>
 														<div class="col-xxl-2 col-lg-4 col-sm-6">
@@ -336,7 +359,7 @@
 																<label class="form-label" for="d1">Nationtality
 																	<span class="text-danger">*</span></label>
 																<select class="form-select " style="width: 100%;"
-																	id="nationSelect1" formControlName="nationalityId"
+																	id="d1" formControlName="nationalityId"
 																	(change)="changeNation($event)"
 																	[ngClass]="{ 'is-invalid': submitted && register.controls.nationalityId.errors }">
 																	<option value="null">Select Nationtality</option>

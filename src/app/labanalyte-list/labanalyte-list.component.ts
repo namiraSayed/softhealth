@@ -62,7 +62,7 @@ export class LabanalyteListComponent {
     this.http
       .get( this.serverUrl + `laboratoryProcess/GetLaboratoryAnalyteSearchBy/${this.searchKey}/${this.currentPage}/${this.itemsPerPage}` )
       .subscribe((data: any) => {
-        if (data.laboratoryAnalyteData == null) {
+        if (data.laboratoryAnalyteData.laboratoryAnalyteList == null) {
           this.analyteData = [];
           this.notFound = true;
         } else {
@@ -84,7 +84,7 @@ export class LabanalyteListComponent {
     this.http
       .get( this.serverUrl + `laboratoryProcess/GetLaboratoryAnalyteSearchBy/${this.searchKey}/${ this.p - 1 }/${this.itemsPerPage}` )
       .subscribe((data: any) => {
-        if (data.laboratoryAnalyteData == null) {
+        if (data.laboratoryAnalyteData.laboratoryAnalyteList == null) {
           this.analyteData = [];
           this.notFound = true;
         } else {

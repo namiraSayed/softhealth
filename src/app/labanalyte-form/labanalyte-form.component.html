@@ -58,10 +58,21 @@
                     </div>
                   </div>
                 </div>
+                 <div class="col-xxl-2 col-lg-2 col-sm-6">
+                  <div class="mb-3">
+                    <label class="form-label" for="a3">Unit</label>
+                    <select class="form-select" id="a3" formControlName="unitId">
+                      <option value="null">Select Unit</option>
+                      <option [value]="item.dropdownValueId" *ngFor="let item of unitData">
+                        {{item.value}}
+                      </option>
+                    </select>
+                  </div>
+                </div>
                 <div class="col-xxl-2 col-lg-2 col-sm-6">
                   <div class="mb-3">
-                    <label class="form-label" for="a13">Specimen Type</label>
-                    <select class="form-select" id="a13" formControlName="laboratorySpecimenTypeId">
+                    <label class="form-label" for="a4">Specimen Type</label>
+                    <select class="form-select" id="a4" formControlName="laboratorySpecimenTypeId">
                       <option value="null">Select Specimen Type</option>
                       <option [value]="item.dropdownValueId" *ngFor="let item of specimenTypeData">
                         {{item.value}}
@@ -71,8 +82,8 @@
                 </div>
                 <div class="col-xxl-2 col-lg-2 col-sm-6">
                   <div class="mb-3">
-                    <label class="form-label" for="a13">Result Data Type</label>
-                    <select class="form-select" id="a13" formControlName="resultDataTypeId">
+                    <label class="form-label" for="a5">Result Data Type</label>
+                    <select class="form-select" id="a5" formControlName="resultDataTypeId">
                       <option value="null">Select Result Data Type</option>
                       <option [value]="item.dropdownValueId" *ngFor="let item of resultDataTypeData">
                         {{item.value}}
@@ -80,10 +91,10 @@
                     </select>
                   </div>
                 </div>
-                <div class="col-xxl-3 col-lg-3 col-sm-6">
+                <div class="col-xxl-2 col-lg-2 col-sm-6">
                   <div class="mb-3">
-                    <label class="form-label" for="a13">CLIA Complexity</label>
-                    <select class="form-select" id="a13" formControlName="cliaComplexityId">
+                    <label class="form-label" for="a6">CLIA Complexity</label>
+                    <select class="form-select" id="a6" formControlName="cliaComplexityId">
                       <option value="null">Select CLIA Complexity</option>
                       <option [value]="item.dropdownValueId" *ngFor="let item of cliaComplexityData">
                         {{item.value}}
@@ -93,8 +104,8 @@
                 </div>
                 <div class="col-xxl-3 col-lg-3 col-sm-6">
                   <div class="mb-3">
-                    <label class="form-label" for="a66">Test Methodology</label>
-                    <select class="form-select" id="a66" formControlName="testMethodologyId">
+                    <label class="form-label" for="a7">Test Methodology</label>
+                    <select class="form-select" id="a7" formControlName="testMethodologyId">
                       <option value="null">Select Test Methodology</option>
                       <option [value]="item.dropdownValueId" *ngFor="let item of testMethodologyData">
                         {{item.value}}
@@ -102,24 +113,27 @@
                     </select>
                   </div>
                 </div>
-
-
-
-                
-               
                 <div class="col-xxl-2 col-lg-3 col-sm-6">
                   <div class="mb-3">
-                    <label class="form-label" for="a4">TAT Minutes</label>
+                    <label class="form-label" for="a8">TAT Minutes</label>
                     <div class="input-group">
-                        <input type="number" id="a4" class="form-control noArrowNum" formControlName="tatMinutes">
+                        <input type="number" id="a8" class="form-control noArrowNum" formControlName="tatMinutes">
                     </div>
                   </div>
                 </div>
-                <div class="col-xxl-3 col-lg-4 col-sm-6">
+                <div class="col-xxl-3 col-lg-3 col-sm-6">
+                  <div class="mb-3">
+                    <label class="form-label" for="a9">Interpretation</label>
+                    <div class="input-group">
+                      <textarea id="a9" rows="3" class="form-control" formControlName="interpretation"></textarea>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xxl-2 col-lg-2 col-sm-6">
                   <div class="mb-3">
                     <div class="form-check form-switch mt-4">
-                      <input class="form-check-input" type="checkbox" role="switch" formControlName="isActive" id="a7">
-                      <label class="form-check-label" for="a7">Status</label>
+                      <input class="form-check-input" type="checkbox" role="switch" formControlName="isActive" id="a10">
+                      <label class="form-check-label" for="a10">Status</label>
                     </div>
                   </div>
                 </div>
@@ -133,9 +147,176 @@
                 </a>
               </div>
             </div>
+
+           
           </div>
         </div>
       </div>
     </div>
+      <!-- Row starts -->
+        <div class="row gx-3 mt-3" *ngIf="isEdit">
+          <div class="col-sm-12">
+            <div class="accordion mb-3" id="accordionSpecialTitle">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingSpecialTitleOne">
+                  <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseSpecialTitleOne" aria-expanded="true"
+                    aria-controls="collapseSpecialTitleOne">
+                    <div class="d-flex flex-column">
+                      <h5 class="m-0">References</h5>
+                    </div>
+                  </button>
+                </h2>
+                <div id="collapseSpecialTitleOne" class="accordion-collapse collapse show" aria-labelledby="headingSpecialTitleOne"
+                  data-bs-parent="#accordionSpecialTitle">
+                  <div class="accordion-body">
+                    <div class="row">
+                      <!-- Row Start -->
+                      <form [formGroup]="labRefForm">
+                        <div class="row gx-3 mt-1 ">
+                          <div class="col-xxl-3 col-lg-6 col-sm-12">
+                            <div class="mb-3">
+                              <label class="form-label" for="b1">Gender</label>
+                              <select class="form-select" id="b1" formControlName="genderId">
+                                <option value="null">Select Gender</option>
+                                <option [value]="item.dropdownValueId" *ngFor="let item of genderData">
+                                  {{item.value}}
+                                </option>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="col-xxl-2 col-lg-2 col-sm-4">
+                            <div class="mb-3">
+                              <label class="form-label" for="b2">Age Min</label>
+                              <input type="number" class="form-control noArrowNum" formControlName="ageMin" id="b2" placeholder="Enter age Min">
+                            </div>
+                          </div>
+                          <div class="col-xxl-2 col-lg-2 col-sm-4">
+                            <div class="mb-3">
+                              <label class="form-label" for="b3">Age Max</label>
+                              <input type="number" class="form-control noArrowNum" formControlName="ageMax" id="b3" placeholder="Enter age Max">
+                            </div>
+                          </div>
+                          <div class="col-xxl-3 col-lg-3 col-sm-12">
+                            <div class="mb-3">
+                              <label class="form-label" for="b4"> Age Unit</label>
+                              <select class="form-select" id="b4" formControlName="ageUnitId">
+                                <option value="null">Select Unit</option>
+                                <option [value]="item.dropdownValueId" *ngFor="let item of unitData">
+                                  {{item.value}}
+                                </option>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="col-xxl-2 col-lg-2 col-sm-4">
+                            <div class="mb-3">
+                              <label class="form-label" for="b5">Normal Low</label>
+                              <input type="text" class="form-control" formControlName="normalLow" id="b5" placeholder="Enter Normal Low">
+                            </div>
+                          </div>
+                           <div class="col-xxl-2 col-lg-2 col-sm-4">
+                            <div class="mb-3">
+                              <label class="form-label" for="b6">Normal High</label>
+                              <input type="text" class="form-control" formControlName="normalHigh" id="b6" placeholder="Enter Normal High">
+                            </div>
+                          </div>
+                          <div class="col-xxl-2 col-lg-2 col-sm-4">
+                            <div class="mb-3">
+                              <label class="form-label" for="b7">Critical Low</label>
+                              <input type="text" class="form-control" formControlName="criticalLow" id="b7" placeholder="Enter Critical Low">
+                            </div>
+                          </div>
+                           <div class="col-xxl-2 col-lg-2 col-sm-4">
+                            <div class="mb-3">
+                              <label class="form-label" for="b8">Critical High</label>
+                              <input type="text" class="form-control" formControlName="criticalHigh" id="b8" placeholder="Enter Critical High">
+                            </div>
+                          </div>
+                          <div class="col-xxl-4 col-lg-4 col-sm-4">
+                            <div class="mb-3">
+                              <label class="form-label" for="b9">Display Range</label>
+                              <input type="text" class="form-control" formControlName="displayRange" id="b9" placeholder="Enter Display Range">
+                            </div>
+                          </div>
+                          <div class="col-xxl-1 col-lg-2 col-sm-6">
+                            <div class="mb-3">
+                              <div class="form-check form-switch mt-4">
+                                <input class="form-check-input" type="checkbox" role="switch" formControlName="isActive" id="b10">
+                                <label class="form-check-label" for="b10">{{'Status' | translate}}</label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </form>
+                      <div class="col-sm-12">
+                        <div class="d-flex gap-2 justify-content-end">
+                          <a type="button" class="btn btn-outline-secondary" (click)="clearform()">Cancel</a>
+                          <a type="button" class="btn btn-primary" (click)="saveReferenceForm()">
+                            {{ editMode? 'Update' : 'Save'}}
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="table-outer mt-3">
+                      <div class="table-responsive">
+                        <table class="table truncate m-0">
+                          <thead>
+                            <tr>
+                              <th>Gender</th>
+                              <th>Age Min</th>
+                              <th>Age Max</th>
+                              <th>Age Unit</th>
+                              <th>Normal Low</th>
+                              <th>Normal High</th>
+                              <th>Display Range</th>
+                              <th>Status</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            @for(refer of referenceData; track refer.laboratoryAnalyteReferenceId) {
+                            <tr>
+                              <td>{{refer?.gender}}</td>
+                              <td>{{refer?.ageMin}}</td>
+                              <td>{{refer?.ageMax}}</td>
+                              <td>{{refer?.ageUnit}}</td>
+                              <td>{{refer?.normalLow}}</td>
+                              <td>{{refer?.normalHigh}}</td>
+                              <td>{{refer?.displayRange}}</td>
+                              <td>
+                                @if(refer.isActive == true) {
+                                  <span class="badge border border-primary text-primary">Active</span>
+                                } 
+                                @if(refer.isActive == false) {
+                                  <span class="badge border border-primary text-primary">Active</span>
+                                } 
+                              </td>
+                              <td class="p-1">
+                                <a class="btn btn-outline-success btn-sm table-btn" data-bs-placement="bottom" title="Edit"
+                                  data-bs-toggle="tooltip" (click)="editReference(refer)">
+                                  <i class="ri-edit-box-line"></i>
+                                </a>
+                                <!-- <a class="btn btn-outline-info btn-sm table-btn" data-bs-placement="bottom" title="View"
+                                  data-bs-toggle="tooltip" (click)="viewrefer(refer)">
+                                  <i class="ri-eye-line"></i>
+                                </a>
+                                <a class="btn btn-outline-danger btn-sm table-btn" data-bs-toggle="modal" href="#">
+                                  <i class="ri-delete-bin-line"></i>
+                                </a> -->
+                              </td>
+                            </tr>
+                            }
+                
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Row ends -->
   </div>
 </div>
